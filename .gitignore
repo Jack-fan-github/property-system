@@ -1,0 +1,32 @@
+# OS and editor files
+.DS_Store
+.idea/
+.vscode/
+*.iml
+
+# Java / Maven
+**/target/
+springboot/.mvn/timing.properties
+springboot/logs/
+*.log
+
+# Node / Vite
+**/node_modules/
+**/dist/
+*.local
+.npmrc
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+
+# Local uploads and generated files
+uploads/
+**/uploads/
+workspace/
+

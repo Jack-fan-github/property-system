@@ -1,0 +1,221 @@
+.login-container {
+  background: var(--bg-color);
+  padding: 0 60rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 80rpx;
+}
+
+.logo-box {
+  width: 140rpx;
+  height: 140rpx;
+  background: #fff;
+  border-radius: 40rpx;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30rpx;
+}
+
+.logo {
+  width: 80rpx;
+  height: 80rpx;
+}
+
+.app-name {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: var(--text-main);
+  margin-bottom: 10rpx;
+}
+
+.slogan {
+  font-size: 26rpx;
+  color: var(--text-placeholder);
+  letter-spacing: 4rpx;
+}
+
+.form-section {
+  width: 100%;
+}
+
+.input-item {
+  background: #f7f8fa;
+  border-radius: 16rpx;
+  padding: 24rpx 30rpx;
+  margin-bottom: 30rpx;
+  display: flex;
+  align-items: center;
+}
+
+.input-item:focus-within {
+  background: #fff;
+  box-shadow: 0 0 0 2rpx var(--primary-color);
+}
+
+.input {
+  flex: 1;
+  font-size: 30rpx;
+  color: var(--text-main);
+  height: 44rpx;
+}
+
+.captcha-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+  gap: 16rpx;
+}
+
+.captcha-input {
+  flex: 1;
+  background: #f7f8fa;
+  border-radius: 16rpx;
+  padding: 24rpx 30rpx;
+  font-size: 30rpx;
+  height: 44rpx;
+}
+
+.captcha-box {
+  width: 220rpx;
+  height: 80rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  border: 2rpx solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f4ff;
+}
+
+.captcha-img {
+  width: 220rpx;
+  height: 80rpx;
+}
+
+.captcha-loading {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.captcha-tip {
+  text-align: right;
+  font-size: 22rpx;
+  color: #999;
+  margin-bottom: 30rpx;
+}
+
+.captcha-tip:active {
+  color: var(--primary-color);
+}
+
+.action-links {
+  display: flex;
+  justify-content: space-between;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  margin-bottom: 60rpx;
+}
+
+.btn-login {
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: 44rpx;
+  font-size: 32rpx;
+  height: 88rpx;
+  font-weight: bold;
+  box-shadow: 0 12rpx 24rpx rgba(60, 127, 255, 0.28);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 60rpx 0 40rpx;
+  color: var(--text-placeholder);
+  font-size: 24rpx;
+}
+
+.line {
+  flex: 1;
+  height: 1rpx;
+  background: #eee;
+}
+
+.divider text {
+  margin: 0 20rpx;
+}
+
+.btn-wechat {
+  background: #fff;
+  color: var(--text-main);
+  border: 2rpx solid #eee;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-wechat .iconfont {
+  color: var(--primary-color);
+  font-size: 40rpx;
+  margin-right: 16rpx;
+}
+
+.btn-hover {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
+
+.sms-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 30rpx;
+}
+
+.sms-input {
+  flex: 1;
+  background: #f7f8fa;
+  border-radius: 16rpx;
+  padding: 24rpx 30rpx;
+  font-size: 30rpx;
+  height: 44rpx;
+}
+
+.btn-sms {
+  flex-shrink: 0;
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: 12rpx;
+  font-size: 24rpx;
+  margin: 0;
+  line-height: 76rpx;
+  height: 76rpx;
+  padding: 0 24rpx;
+}
+
+.btn-sms[disabled] {
+  background: #ccc;
+  color: #fff;
+}
+
+.mode-switch {
+  text-align: center;
+  font-size: 26rpx;
+  color: var(--primary-color);
+  margin-bottom: 40rpx;
+}
+
+.mode-switch:active {
+  opacity: 0.7;
+}
