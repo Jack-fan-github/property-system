@@ -48,11 +48,11 @@ public class SecurityConfig {
                                 "/LoginRegister/wechatLogin",
                                 "/LoginRegister/sendSmsCode",
                                 "/LoginRegister/smsLogin",
-                                "/api/pay/page/alipay",
-                                "/api/pay/return/alipay",
-                                "/api/pay/notify/alipay",
                                 "/files/download/**",
-                                "/files/**"
+                                "/files/**",
+                                "/repair/categories",
+                                "/repair/submit",
+                                "/repair/detail/**"
 
                         ).permitAll()
                         // 管理员专用接口
@@ -82,12 +82,9 @@ public class SecurityConfig {
                                 "/LoginRegister/mute",
                                 "/LoginRegister/ban"
                         ).hasRole("ADMIN")
-                        .requestMatchers("/api/fee/allBills").hasRole("ADMIN")
                         // 维修权限 - 普通用户可访问的维修接口
                         .requestMatchers(
                                 "/repair/myRepair",
-                                "/repair/categories",
-                                "/repair/submit",
                                 "/repair/detail/**",
                                 "/repair/cancel/**",
                                 "/repair/evaluate"
@@ -110,7 +107,6 @@ public class SecurityConfig {
                         // 需要登录即可访问（管理员也可访问）
                         .requestMatchers("/travel-pass/**").authenticated()
                         .requestMatchers("/Forum/**").authenticated()
-                        .requestMatchers("/api/fee/**").authenticated()
                         // 其他接口必须登录
                         .anyRequest().authenticated()
                 )

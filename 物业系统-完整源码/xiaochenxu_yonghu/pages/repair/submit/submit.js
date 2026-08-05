@@ -2,8 +2,11 @@ const app = getApp()
 
 Page({
   data: {
+    guestMode: false,
     categories: [],
     categoryIndex: null,
+    locations: ['食堂', '教学楼', '宿舍', '体育馆', '其他'],
+    locationIndex: null,
     description: '',
     phone: '',
     buildingNo: '',
@@ -20,12 +23,14 @@ Page({
     endDate: '' // 可选日期结束
   },
 
-  onLoad() {
+  onLoad(options) {
+    const guestMode = options && options.guest === '1'
     const user = wx.getStorageSync('user')
     const buildingNo = user?.buildingNo || '1'
     const unitNo = user?.unitNo || '1'
     const roomNo = user?.roomNo || '101'
     this.setData({
+      guestMode,
       phone: user?.phone || '',
       buildingNo,
       unitNo,
@@ -66,8 +71,8 @@ Page({
   },
 
   chooseMedia() {
-    if (this.data.files.length >= 3) {
-      wx.showToast({ title: '最多上传3个', icon: 'none' })
+    if (this.data.files.length >= 6) {
+      wx.showToast({ title: '最多上传6个', icon: 'none' })
       return
     }
     wx.showActionSheet({
@@ -84,7 +89,7 @@ Page({
 
   chooseImages() {
     wx.chooseImage({
-      count: 3 - this.data.files.length,
+      count: 6 - this.data.files.length,
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
       success: (res) => {
@@ -99,8 +104,8 @@ Page({
   },
 
   chooseVideo() {
-    if (this.data.files.length >= 3) {
-      wx.showToast({ title: '最多上传3个', icon: 'none' })
+    if (this.data.files.length >= 6) {
+      wx.showToast({ title: '最多上传6个', icon: 'none' })
       return
     }
     wx.chooseVideo({
@@ -173,10 +178,6 @@ Page({
       const storedUser = wx.getStorageSync('user') || {}
       const token = app.globalData.token || wx.getStorageSync('token') || storedUser.token || ''
       const authHeader = token ? (token.startsWith('Bearer ') ? token : `Bearer ${token}`) : ''
-      if (!authHeader) {
-        reject('请先登录')
-        return
-      }
       const headers = { Authorization: authHeader }
       wx.uploadFile({
         url: `${baseUrl}/files/upload`,
@@ -209,18 +210,31 @@ Page({
   },
 
   loadCategories() {
+    const fallbackCategories = [
+      { categoryId: 1, categoryName: '水电' },
+      { categoryId: 2, categoryName: '门窗' },
+      { categoryId: 3, categoryName: '地面' },
+      { categoryId: 4, categoryName: '家具' },
+      { categoryId: 5, categoryName: '空调' },
+      { categoryId: 6, categoryName: '其他' }
+    ]
     app.request({
       url: '/repair/categories',
       method: 'GET'
     }).then(res => {
-      if (res.code === '200') {
-        this.setData({ categories: res.data })
-      }
+      const categories = Array.isArray(res) ? res : res && res.data
+      this.setData({ categories: Array.isArray(categories) && categories.length ? categories : fallbackCategories })
+    }).catch(() => {
+      this.setData({ categories: fallbackCategories })
     })
   },
 
   bindCategoryChange(e) {
     this.setData({ categoryIndex: e.detail.value })
+  },
+
+  bindLocationChange(e) {
+    this.setData({ locationIndex: e.detail.value })
   },
 
   bindDescriptionInput(e) {
@@ -276,6 +290,14 @@ Page({
       wx.showToast({ title: '请填写描述', icon: 'none' })
       return
     }
+    if (this.data.locationIndex === null) {
+      wx.showToast({ title: '请选择报修位置', icon: 'none' })
+      return
+    }
+    if (!this.data.files.some(file => file.type === 'image')) {
+      wx.showToast({ title: '请至少上传1张现场照片', icon: 'none' })
+      return
+    }
     if (!this.data.date || !this.data.time) {
       wx.showToast({ title: '请选择预约上门时间', icon: 'none' })
       return
@@ -300,21 +322,12 @@ Page({
   },
 
   submitOrder(fileUrls) {
-    const user = wx.getStorageSync('user')
-    
-    // 检查用户信息是否存在
-    if (!user || !user.userId) {
-      wx.hideLoading()
-      wx.showToast({ title: '请先登录', icon: 'none' })
-      setTimeout(() => {
-        wx.navigateTo({ url: '/pages/login/login' })
-      }, 1000)
-      return
-    }
+    const user = wx.getStorageSync('user') || {}
     
     const data = {
-      userId: user.userId,
+      userId: user.userId || null,
       categoryId: this.data.categories[this.data.categoryIndex].categoryId,
+      location: this.data.locations[this.data.locationIndex],
       description: this.data.description,
       phone: this.data.phone,
       buildingNo: parseInt(this.data.buildingNo) || 0,
@@ -333,6 +346,14 @@ Page({
     }).then(res => {
       wx.hideLoading()
       if (res.code === '200') {
+        if (!user.userId && res.data) {
+          const guestOrderIds = wx.getStorageSync('guestRepairOrderIds') || []
+          const orderId = typeof res.data === 'object' ? res.data.orderId : res.data
+          if (orderId && !guestOrderIds.includes(orderId)) {
+            guestOrderIds.push(orderId)
+            wx.setStorageSync('guestRepairOrderIds', guestOrderIds)
+          }
+        }
         wx.showToast({ title: '提交成功' })
         setTimeout(() => {
           wx.navigateBack()

@@ -37,10 +37,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
 
         // ✅ 放行白名单：支付回调、用户登录、管理员登录
-        if (uri.startsWith("/api/pay/notify/alipay")
-                || uri.startsWith("/api/pay/page/alipay")
-                || uri.startsWith("/api/pay/return/alipay")
-                || uri.startsWith("/LoginRegister/userLogin")
+        if (uri.startsWith("/LoginRegister/userLogin")
                 || uri.startsWith("/LoginRegister/adminLogin")
                 || uri.startsWith("/LoginRegister/adminlogin")
                 || uri.startsWith("/LoginRegister/employeeLogin")

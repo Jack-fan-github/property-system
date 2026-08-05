@@ -7,9 +7,9 @@
     <!-- 插入一条出行码记录 -->
     <insert id="insert" parameterType="com.example.entity.TravelPassRecord" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO travel_pass_record
-        (user_id, username, has_vehicle, plate_number, paid, issue_time, expire_time, status)
+        (user_id, username, has_vehicle, plate_number, issue_time, expire_time, status)
         VALUES
-            (#{userId}, #{username}, #{hasVehicle}, #{plateNumber}, #{paid}, #{issueTime}, #{expireTime}, #{status})
+            (#{userId}, #{username}, #{hasVehicle}, #{plateNumber}, #{issueTime}, #{expireTime}, #{status})
     </insert>
 
     <!-- 根据ID查询 -->
@@ -34,7 +34,6 @@
         UPDATE travel_pass_record
         SET status = #{status},
             exit_time = #{exitTime},
-            fee = #{fee},
             employee_id = #{employeeId}
         WHERE id = #{id}
     </update>

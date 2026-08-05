@@ -43,12 +43,6 @@
         </view>
         <text class="service-text">物业报修</text>
       </view>
-      <view class="service-item" bindtap="navigateTo" data-url="/pages/pay/list/list">
-        <view class="service-icon bg-green">
-          <text class="iconfont">💰</text>
-        </view>
-        <text class="service-text">在线缴费</text>
-      </view>
       <view class="service-item" bindtap="navigateTo" data-url="/pages/pass/index/index">
         <view class="service-icon bg-purple">
           <text class="iconfont">🚗</text>

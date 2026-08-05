@@ -36,8 +36,6 @@
         <package name="com.example.modules.forum.mapper"/>
         <package name="com.example.modules.repair.mapper"/>
         <package name="com.example.modules.notice.mapper"/>
-        <package name="com.example.modules.pay.mapper"/>
-        <package name="com.example.modules.fee.mapper"/>
         <package name="com.example.modules.travelpass.mapper"/>
     </mappers>
 </configuration>

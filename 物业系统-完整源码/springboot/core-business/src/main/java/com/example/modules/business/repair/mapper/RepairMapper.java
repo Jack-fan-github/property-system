@@ -12,11 +12,13 @@ import java.util.List;
 public interface RepairMapper {
     List<RepairCategory> selectCategories();
 
+    void seedCategories();
+
     void addRepairOrder(RepairOrder repairOrder);
 
     void addRepairFiles(RepairFile repairFile);
 
-    List<RepairOrder> selectMyRepair(Integer  userID);
+    List<RepairOrder> selectMyRepair(@Param("userId") Integer userID, @Param("phone") String phone);
 
 
     // 查询报修单及类别名称

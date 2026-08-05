@@ -21,6 +21,23 @@
 
 
     <!-- 查询所有类别 -->
+    <insert id="seedCategories">
+        INSERT INTO repair_category (category_name, description)
+        SELECT category_name, description
+        FROM (
+          SELECT '水电' AS category_name, '水管、电路、灯具等维修' AS description
+          UNION ALL SELECT '门窗', '门、窗、锁具及五金维修'
+          UNION ALL SELECT '地面', '地面、墙面及相关设施维修'
+          UNION ALL SELECT '家具', '桌椅、柜体等家具维修'
+          UNION ALL SELECT '空调', '空调设备及通风设施维修'
+          UNION ALL SELECT '其他', '其他物业维修事项'
+        ) seed
+        WHERE NOT EXISTS (
+          SELECT 1 FROM repair_category existing
+          WHERE existing.category_name = seed.category_name
+        )
+    </insert>
+
     <select id="selectCategories" resultType="com.example.entity.repair.RepairCategory">
         SELECT *
         FROM repair_category
@@ -44,6 +61,7 @@
         <result property="unitNo" column="unit_no"/>
         <result property="roomNo" column="room_no"/>
         <result property="phone" column="phone"/>
+        <result property="location" column="location"/>
         <result property="name" column="name"/>
         <result property="evaluation" column="evaluation"/>
         <result property="rating" column="rating"/>
@@ -70,6 +88,7 @@
         <result property="unitNo" column="unit_no"/>
         <result property="roomNo" column="room_no"/>
         <result property="phone" column="phone"/>
+        <result property="location" column="location"/>
         <result property="evaluation" column="evaluation"/>
         <result property="rating" column="rating"/>
 
@@ -96,6 +115,7 @@
                ro.unit_no,
                ro.room_no,
                ro.phone,
+               ro.location,
                re.content AS evaluation,
                re.score AS rating,
                rc.category_name
@@ -103,6 +123,7 @@
                  LEFT JOIN repair_category rc ON ro.category_id = rc.category_id
                  LEFT JOIN repair_evaluation re ON ro.order_id = re.assignment_id
         WHERE ro.user_id = #{userId}
+           OR (ro.user_id IS NULL AND #{phone} IS NOT NULL AND #{phone} <> '' AND ro.phone = #{phone})
         ORDER BY ro.created_time DESC
     </select>
 
@@ -150,9 +171,9 @@
             useGeneratedKeys="true" keyProperty="orderId">
         INSERT INTO repair_order
         (user_id, category_id, description, priority, created_time, updated_time, assigned_worker, finished_time,
-         building_no, unit_no, room_no, phone, appointment_time)
+         building_no, unit_no, room_no, phone, location, appointment_time)
         VALUES (#{userId}, #{categoryId}, #{description}, #{priority}, #{createdTime}, #{updatedTime},
-                #{assignedWorker}, #{finishedTime}, #{buildingNo}, #{unitNo}, #{roomNo}, #{phone}, #{appointmentTime})
+                #{assignedWorker}, #{finishedTime}, #{buildingNo}, #{unitNo}, #{roomNo}, #{phone}, #{location}, #{appointmentTime})
     </insert>
 
     <!-- 插入报修文件 -->

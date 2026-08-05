@@ -9,7 +9,7 @@ public interface TravelPassService {
 
     void markEntered(Long id, Long employeeId);
 
-    void markExited(Long id, double fee, Long employeeId);
+    void markExited(Long id, Long employeeId);
     
     com.github.pagehelper.PageInfo<TravelPassRecord> selectPage(Integer pageNum, Integer pageSize, String status, String username);
     

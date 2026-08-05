@@ -6,6 +6,7 @@ import com.example.entity.repair.RepairAssignment;
 import com.example.entity.repair.RepairCategory;
 import com.example.entity.repair.RepairOrder;
 import com.example.entity.Employee;
+import com.example.entity.User;
 import com.example.modules.business.repair.service.RepairService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Date;
 import java.util.List;
@@ -52,7 +55,10 @@ public class RepairController {
 
     //    提交维修内容
     @PostMapping("/submit")
-    public Result addRepairOrder(@RequestBody RepairOrder repairOrder) {
+    public Result addRepairOrder(@RequestBody RepairOrder repairOrder, Authentication authentication) {
+        if (authentication != null && authentication.getPrincipal() instanceof User user) {
+            repairOrder.setUserId(user.getUserId());
+        }
         System.out.println(repairOrder);
         Long orderId = repairService.addRepairOrder(repairOrder);
         
@@ -67,9 +73,19 @@ public class RepairController {
     //查看我的维修
     @GetMapping("/myRepair")
     public Result myRepair(@RequestParam Integer userId,
+                           @RequestParam(required = false) String phone,
                            @RequestParam(defaultValue = "1") Integer page,
-                           @RequestParam(defaultValue = "10") Integer size) {
-        PageInfo<RepairOrder> repairOrderPageInfo = repairService.selectMyRepair(userId, page, size);
+                           @RequestParam(defaultValue = "10") Integer size,
+                           Authentication authentication) {
+        // 普通住户只能查询自己的工单，管理员/维修人员才允许按参数查询。
+        boolean elevated = authentication != null && authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> role.equals("ROLE_ADMIN") || role.equals("ROLE_REPAIRER") || role.equals("ROLE_EMPLOYEE"));
+        if (!elevated && authentication != null && authentication.getPrincipal() instanceof User user) {
+            userId = user.getUserId() == null ? userId : Math.toIntExact(user.getUserId());
+            phone = user.getPhone();
+        }
+        PageInfo<RepairOrder> repairOrderPageInfo = repairService.selectMyRepair(userId, phone, page, size);
         return Result.success(repairOrderPageInfo);
     }
 

@@ -1,0 +1,63 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-hr}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-123456}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./数据库/hr.sql:/docker-entrypoint-initdb.d/01-hr.sql:ro
+      - ./数据库/guest_repair_migration.sql:/docker-entrypoint-initdb.d/02-guest-repair.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build:
+      context: ./springboot
+    restart: unless-stopped
+    environment:
+      MYSQL_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-hr}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-123456}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      FILE_UPLOAD_PATH: /app/files
+      FILE_ACCESS_URL: http://localhost:8080/files/download
+      JWT_SECRET: ${JWT_SECRET:-property-system-jwt-secret-key-2024}
+      WECHAT_APPID: ${WECHAT_APPID:-wx0000000000000000}
+      WECHAT_SECRET: ${WECHAT_SECRET:-00000000000000000000000000000000}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads:/app/files
+
+  web:
+    build:
+      context: ./vue_guanliyuan
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  mysql_data:
+  redis_data:
+  uploads:

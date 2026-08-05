@@ -14,7 +14,6 @@ public interface TravelPassRecordMapper {
 
     void updateExit(@Param("id") Long id,
                     @Param("exitTime") java.util.Date exitTime,
-                    @Param("fee") Double fee,
                     @Param("status") String status,
                     @Param("employeeId") Long employeeId);
     

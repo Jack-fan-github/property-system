@@ -12,8 +12,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
         "com.example.modules.business.*.*.mapper",
         "com.example.modules.system.*.mapper",
         "com.example.modules.notice.mapper",
-        "com.example.modules.pay.mapper",
-        "com.example.modules.fee.mapper",
         "com.example.modules.travelpass.mapper",
         "com.example.modules.forum.mapper",
         "com.example.modules.repair.mapper"

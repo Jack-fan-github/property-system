@@ -18,8 +18,6 @@ const CommentList = () => import('@/pages/forum/Commentlist.vue')
 const MuteManage = () => import('@/pages/forum/MuteManage.vue')
 const RepairOrder = () => import('@/pages/repair/RepairOrder.vue')
 const RepairFeedback = () => import('@/pages/repair/Feedback.vue')
-const FeeList = () => import('@/pages/pay/feeList.vue')
-const PayResult = () => import('@/pages/pay/PayResult.vue')
 const TravelLog = () => import('@/pages/travel/TravelLog.vue')
 const TravelPassList = () => import('@/pages/travel/TravelPassList.vue')
 const ActivityLog = () => import('@/pages/monitor/logininfor/index.vue')
@@ -35,11 +33,6 @@ const router = createRouter({
       path: '/login',
       component: Login,
       meta: { title: '登录', requiresAuth: false }
-    },
-    {
-      path: '/pay/result',
-      component: PayResult,
-      meta: { title: '支付结果', requiresAuth: false }
     },
     {
       path: '/',
@@ -132,11 +125,6 @@ const router = createRouter({
           path: 'repair/feedback',
           component: RepairFeedback,
           meta: { title: '报修评价', requiresAuth: true }
-        },
-        {
-          path: 'pay/fee-list',
-          component: FeeList,
-          meta: { title: '物业费列表', requiresAuth: true }
         },
         {
           path: 'monitor/logininfor',

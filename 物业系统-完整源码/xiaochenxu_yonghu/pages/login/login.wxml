@@ -37,6 +37,7 @@
     </view>
 
     <button class="btn-login" bindtap="handleLogin" hover-class="btn-hover">{{loginMode === 'password' ? '登 录' : '登 录'}}</button>
+    <button class="btn-guest-repair" bindtap="goToGuestRepair" hover-class="btn-hover">直接报修</button>
 
     <view class="mode-switch" bindtap="switchMode">
       {{loginMode === 'password' ? '使用手机验证码登录' : '使用账号密码登录'}}

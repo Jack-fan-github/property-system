@@ -1,7 +1,44 @@
+.guest-tip {
+  margin: 20rpx 0;
+  padding: 20rpx 24rpx;
+  color: #8a5a00;
+  background: #fff7e6;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
 .container {
   padding: 30rpx;
   background-color: var(--bg-color);
   min-height: 100vh;
+}
+
+.page-header {
+  padding: 18rpx 8rpx 28rpx;
+}
+
+.page-kicker {
+  display: block;
+  color: var(--primary-color);
+  font-size: 24rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.page-title {
+  display: block;
+  color: var(--text-main);
+  font-size: 48rpx;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  display: block;
+  color: var(--text-placeholder);
+  font-size: 26rpx;
+  margin-top: 12rpx;
 }
 
 .form-group {

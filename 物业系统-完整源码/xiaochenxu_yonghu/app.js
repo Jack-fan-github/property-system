@@ -1,12 +1,28 @@
 App({
   globalData: {
     baseUrl: 'https://ridge-pond-placement-fee.trycloudflare.com',
-    token: ''
+    token: '',
+    scanHandled: false
   },
 
-  onLaunch() {
+  onLaunch(options) {
     const token = wx.getStorageSync('token')
     if (token) this.globalData.token = token
+    this.handleScanEntry(options)
+  },
+
+  onShow(options) {
+    this.handleScanEntry(options)
+  },
+
+  handleScanEntry(options) {
+    if (!options || (!options.scene && !(options.query && options.query.scene))) return
+    if (this.globalData.scanHandled) return
+    this.globalData.scanHandled = true
+    const hasToken = !!(this.globalData.token || wx.getStorageSync('token'))
+    const guestOrders = wx.getStorageSync('guestRepairOrderIds') || []
+    const target = hasToken || guestOrders.length ? '/pages/repair/list/list' : '/pages/login/login'
+    setTimeout(() => wx.reLaunch({ url: target }), 0)
   },
 
   setToken(token) {

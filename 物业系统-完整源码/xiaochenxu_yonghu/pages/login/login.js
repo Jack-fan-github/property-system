@@ -200,5 +200,9 @@ Page({
 
   goToRegister() {
     wx.navigateTo({ url: '/pages/register/register' })
+  },
+
+  goToGuestRepair() {
+    wx.navigateTo({ url: '/pages/repair/submit/submit?guest=1' })
   }
 })

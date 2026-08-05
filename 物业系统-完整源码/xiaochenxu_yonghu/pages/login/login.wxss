@@ -135,6 +135,16 @@
   box-shadow: 0 12rpx 24rpx rgba(60, 127, 255, 0.28);
 }
 
+.btn-guest-repair {
+  margin-top: 24rpx;
+  background: #fff;
+  color: var(--primary-color);
+  border: 2rpx solid var(--primary-color);
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  height: 84rpx;
+}
+
 .divider {
   display: flex;
   align-items: center;
@@ -214,6 +224,7 @@
   font-size: 26rpx;
   color: var(--primary-color);
   margin-bottom: 40rpx;
+  transform: translateY(3rpx);
 }
 
 .mode-switch:active {

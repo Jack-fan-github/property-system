@@ -14,8 +14,6 @@
     "pages/repair/list/list",
     "pages/repair/submit/submit",
     "pages/repair/detail/detail",
-    "pages/pay/list/list",
-    "pages/pay/sandbox/sandbox",
     "pages/pass/index/index",
     "pages/pass/record/list/list",
     "pages/pass/record/detail/detail"

@@ -1,8 +1,19 @@
 # 物业管理系统总览
 
-本项目由后端服务、管理员端 Web、用户端小程序、员工端小程序四部分组成，围绕物业管理的登录认证、公告、报修、论坛、出行码、缴费与审核等业务实现端到端闭环。
+本项目由后端服务、管理员端 Web、用户端小程序、员工端小程序四部分组成，围绕物业管理的登录认证、公告、报修、论坛、出行码与审核等业务实现端到端闭环。
 
 文档索引：
+
+## Docker 启动
+
+安装并启动 Docker Desktop 后，在本目录执行：
+
+```bash
+copy .env.example .env
+docker compose up -d --build
+```
+
+管理端访问 `http://localhost/`，后端访问 `http://localhost:8080/`。首次启动会自动初始化 MySQL 和 Redis；上传文件保存在 Docker volume 中。
 
 - 管理员端：[管理员端.md](file:///e:/grxm/Property%20management%20system/管理员端.md)
 - 用户端小程序：[用户端小程序.md](file:///e:/grxm/Property%20management%20system/用户端小程序.md)
@@ -16,7 +27,7 @@ Property management system/
 ├─ springboot/                  # 后端（Spring Boot 多模块）
 │  ├─ core-api/                  # 应用入口与资源配置
 │  ├─ core-auth/                 # 登录/认证/鉴权
-│  ├─ core-business/             # 业务模块（论坛/报修/缴费/出行码等）
+│  ├─ core-business/             # 业务模块（论坛/报修/出行码等）
 │  ├─ core-common/               # 通用配置与工具
 │  ├─ core-domain/               # 实体与 DTO
 │  ├─ core-system/               # 系统管理模块
@@ -33,7 +44,7 @@ Property management system/
 
 ## 技术栈
 
-- 后端：Spring Boot 3.4.7、MyBatis、Redis、JWT、MySQL、Alipay SDK
+- 后端：Spring Boot 3.4.7、MyBatis、Redis、JWT、MySQL
 - 管理员端：Vue 3、Vite、Element Plus、Axios、WangEditor
 - 小程序端：微信小程序原生框架
 - 构建：Maven、Node.js
@@ -42,7 +53,7 @@ Property management system/
 
 - 后端服务：多模块 Spring Boot 服务，对外提供统一 REST API
 - 管理员端：面向物业管理角色的管理后台
-- 用户端小程序：住户侧业务入口，提供报修、缴费、出行码等功能
+- 用户端小程序：住户侧业务入口，提供报修、出行码等功能
 - 员工端小程序：员工侧业务入口，提供工单、公告、扫码核验等能力
 
 ## 总体功能
@@ -52,7 +63,6 @@ Property management system/
 - 报修工单提交、派单、处理与评价
 - 社区论坛发帖、评论与管理
 - 出行码申请、核验与记录
-- 物业缴费与账单管理
 
 ## 关键配置
 
@@ -65,11 +75,6 @@ Property management system/
 需要补充的环境变量（示例）：
 
 ```
-ALIPAY_APP_ID=你的AppId
-ALIPAY_PRIVATE_KEY=你的支付宝私钥
-ALIPAY_PUBLIC_KEY=你的支付宝公钥
-ALIPAY_NOTIFY_URL=你的回调地址
-ALIPAY_RETURN_URL=你的同步返回地址
 WECHAT_APPID=你的小程序AppId
 WECHAT_SECRET=你的小程序AppSecret
 JWT_SECRET=你的JWT签名密钥

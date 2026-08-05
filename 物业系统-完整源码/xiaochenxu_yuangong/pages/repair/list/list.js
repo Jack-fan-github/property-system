@@ -2,6 +2,7 @@ const app = getApp()
 
 Page({
   data: {
+    mine: false,
     list: [],
     page: 1,
     size: 10,
@@ -13,6 +14,10 @@ Page({
       processing: 0,
       completed: 0
     }
+  },
+
+  onLoad(options) {
+    this.setData({ mine: options && options.mine === '1' })
   },
 
   onShow() {
@@ -41,8 +46,11 @@ Page({
 
     const employee = wx.getStorageSync('employee') || getApp().globalData.employee || {}
     const status = this.data.status
-    let url = '/repair/status'
+    let url = this.data.mine ? '/repair/byWorker' : '/repair/status'
     let params = { page: this.data.page, size: this.data.size, status }
+    if (this.data.mine) {
+      params.workerId = employee.employeeId || employee.id || 0
+    }
 
     // if (status === '已完成') {
     //   // 已完成只看本人? 暂时先用 status 接口统一查，后续根据需求调整

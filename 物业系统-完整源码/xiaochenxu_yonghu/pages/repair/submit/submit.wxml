@@ -1,4 +1,16 @@
 <view class="container">
+  <view class="page-header">
+    <text class="page-kicker">服务中心</text>
+    <text class="page-title">我要报修</text>
+    <text class="page-subtitle">提交问题，物业会及时跟进处理</text>
+  </view>
+  <view class="guest-tip" wx:if="{{guestMode}}">免登录报修：请填写真实手机号，登录后可查看本人提交的工单。</view>
+  <view class="form-group">
+    <view class="label">报修位置</view>
+    <picker bindchange="bindLocationChange" value="{{locationIndex}}" range="{{locations}}">
+      <view class="picker">{{locationIndex !== null ? locations[locationIndex] : '请选择报修位置'}}</view>
+    </picker>
+  </view>
   <view class="form-group">
     <view class="label">报修类别</view>
     <picker bindchange="bindCategoryChange" value="{{categoryIndex}}" range="{{categories}}" range-key="categoryName">
@@ -38,7 +50,7 @@
   </view>
 
   <view class="form-group">
-    <view class="label">上传图片/视频</view>
+    <view class="label">现场照片（至少1张，最多6张）</view>
     <view class="image-list">
       <view class="image-item" wx:for="{{files}}" wx:key="path">
         <image wx:if="{{item.type !== 'video'}}" src="{{item.path}}" mode="aspectFill" bindtap="previewFile" data-src="{{item.path}}" data-type="{{item.type}}"></image>
@@ -47,7 +59,7 @@
         </view>
         <view class="delete-btn" catchtap="deleteFile" data-index="{{index}}">×</view>
       </view>
-      <view class="upload-btn" bindtap="chooseMedia" wx:if="{{files.length < 3}}">
+      <view class="upload-btn" bindtap="chooseMedia" wx:if="{{files.length < 6}}">
         <text class="plus">+</text>
       </view>
     </view>

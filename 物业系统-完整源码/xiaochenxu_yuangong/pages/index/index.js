@@ -4,10 +4,9 @@ Page({
   data: {
     employee: null,
     menuList: [
-      { id: 'scan', name: '扫码核销', icon: '/assets/icons/scan.png', color: '#07c160' },
-      { id: 'repair', name: '维修工单', icon: '/assets/icons/repair.png', color: '#1890ff' },
-      { id: 'notice', name: '公告管理', icon: '/assets/icons/notice.png', color: '#faad14' },
-      { id: 'forum', name: '业主论坛', icon: '/assets/icons/forum.png', color: '#722ed1' }
+      { id: 'repair', name: '工单大厅', icon: '/assets/icons/repair.png', color: '#1890ff' },
+      { id: 'mine', name: '我的工单', icon: '/assets/icons/repair.png', color: '#07c160' },
+      { id: 'scan', name: '巡检扫码', icon: '/assets/icons/scan.png', color: '#faad14' }
     ]
   },
 
@@ -29,11 +28,8 @@ Page({
       case 'repair':
         wx.navigateTo({ url: '/pages/repair/list/list' })
         break
-      case 'notice':
-        wx.navigateTo({ url: '/pages/notice/list/list' })
-        break
-      case 'forum':
-        wx.navigateTo({ url: '/pages/forum/index/index' })
+      case 'mine':
+        wx.navigateTo({ url: '/pages/repair/list/list?mine=1' })
         break
     }
   },

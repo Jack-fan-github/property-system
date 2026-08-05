@@ -34,6 +34,7 @@ public class RepairService {
     private Executor cacheCleanExecutor;
 
     public List<RepairCategory> selectCategories() {
+        repairMapper.seedCategories();
         return repairMapper.selectCategories();
     }
 
@@ -75,10 +76,10 @@ public class RepairService {
     }
 
     //我的维修
-    public PageInfo<RepairOrder> selectMyRepair(Integer userID, Integer page, Integer size) {
+    public PageInfo<RepairOrder> selectMyRepair(Integer userID, String phone, Integer page, Integer size) {
 
 
-        String cacheKey = "Repair:MyRepair:" + userID + ":" + page + ":" + size;
+        String cacheKey = "Repair:MyRepair:" + userID + ":" + (phone == null ? "" : phone) + ":" + page + ":" + size;
         String lockKey = "lock:" + cacheKey;
 
         Object db = redisTemplate.opsForValue().get(cacheKey);
@@ -92,7 +93,7 @@ public class RepairService {
         if (Boolean.TRUE.equals(lockAcquired)) {
             try {
                 PageHelper.startPage(page, size);
-                List<RepairOrder> list = repairMapper.selectMyRepair(userID);
+                List<RepairOrder> list = repairMapper.selectMyRepair(userID, phone);
                 PageInfo<RepairOrder> pageInfo = PageInfo.of(list);
 
                 if (list == null || list.isEmpty()) {
@@ -118,7 +119,7 @@ public class RepairService {
 
             // 如果仍然没有缓存（极端情况），再从数据库查询（不建议频繁发生）
             PageHelper.startPage(page, size);
-            List<RepairOrder> list = repairMapper.selectMyRepair(userID);
+            List<RepairOrder> list = repairMapper.selectMyRepair(userID, phone);
             PageInfo<RepairOrder> pageInfo = PageInfo.of(list);
             return pageInfo;
         }

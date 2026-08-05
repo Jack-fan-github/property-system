@@ -54,8 +54,6 @@
         <pagehelper.version>1.4.6</pagehelper.version>
         <hutool.version>5.8.25</hutool.version>
         <zxing.version>3.5.2</zxing.version>
-        <alipay.easysdk.version>2.2.0</alipay.easysdk.version>
-        <alipay.sdk.version>4.34.0.ALL</alipay.sdk.version>
         <java.jwt.version>4.3.0</java.jwt.version>
     </properties>
 
@@ -124,16 +122,6 @@
                 <groupId>com.google.zxing</groupId>
                 <artifactId>core</artifactId>
                 <version>${zxing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alipay.sdk</groupId>
-                <artifactId>alipay-easysdk</artifactId>
-                <version>${alipay.easysdk.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alipay.sdk</groupId>
-                <artifactId>alipay-sdk-java</artifactId>
-                <version>${alipay.sdk.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.auth0</groupId>

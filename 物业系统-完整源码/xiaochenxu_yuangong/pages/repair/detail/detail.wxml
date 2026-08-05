@@ -63,7 +63,7 @@
           <text class="contact-name">{{order.name || '未知业主'}}</text>
           <view class="address-line">
             <text class="icon-small">📍</text>
-            <text>{{order.address || (order.buildingNo + '栋' + order.unitNo + '单元' + order.roomNo + '室')}}</text>
+            <text>{{order.location || order.address || (order.buildingNo + '栋' + order.unitNo + '单元' + order.roomNo + '室')}}</text>
           </view>
         </view>
         <view class="call-btn-circle" bindtap="callUser" data-phone="{{order.phone}}" wx:if="{{order.phone}}">

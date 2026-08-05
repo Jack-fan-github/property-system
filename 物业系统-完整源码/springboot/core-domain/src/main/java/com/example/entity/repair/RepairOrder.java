@@ -26,6 +26,7 @@ public class RepairOrder {
     private Integer unitNo;
     private Integer roomNo;
     private String phone;
+    private String location;
     private String name; // 业主姓名
     private List<RepairFile> files;
     

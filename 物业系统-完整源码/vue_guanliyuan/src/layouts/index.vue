@@ -81,13 +81,6 @@
             <el-menu-item index="/forum/mute">禁言管理</el-menu-item>
           </el-sub-menu>
 
-          <el-sub-menu index="property">
-            <template #title>
-              <el-icon><Wallet /></el-icon>
-              <span>物业收费</span>
-            </template>
-            <el-menu-item index="/pay/fee-list">费用清单</el-menu-item>
-          </el-sub-menu>
 
           <el-sub-menu index="monitor">
             <template #title>
@@ -162,7 +155,6 @@ import {
   Tools,
   Grid,
   ChatLineSquare,
-  Wallet,
   Monitor,
   SwitchButton,
   CaretBottom,

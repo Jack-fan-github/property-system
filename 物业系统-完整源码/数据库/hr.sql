@@ -83,31 +83,6 @@ CREATE TABLE `employee`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '员工信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for fee_bill
--- ----------------------------
-DROP TABLE IF EXISTS `fee_bill`;
-CREATE TABLE `fee_bill`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `bill_no` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '账单编号（业务唯一，如 FB202508180001）',
-  `residence_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '住宅ID（楼栋-单元-房号，例如 1-2-302）',
-  `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '账单标题（如 2025年8月物业费）',
-  `unit_price` decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '单价（元/㎡·月等，便于审计）',
-  `area_snapshot` decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '计费面积快照（下单时记录，避免后续面积变动影响）',
-  `period_start` date NOT NULL COMMENT '计费周期开始日期',
-  `period_end` date NOT NULL COMMENT '计费周期结束日期',
-  `amount` decimal(10, 2) NOT NULL COMMENT '应付金额（元）',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '账单状态：0-已取消，1-待支付，2-已支付，3-已关闭',
-  `pay_order_id` bigint NULL DEFAULT NULL COMMENT '最近一次关联的支付订单ID（便于追溯）',
-  `due_date` date NULL DEFAULT NULL COMMENT '到期日（逾期可加提醒或滞纳金策略）',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_bill_no`(`bill_no` ASC) USING BTREE,
-  INDEX `idx_residence_status`(`residence_id` ASC, `status` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '物业费用账单' ROW_FORMAT = Dynamic;
-
--- ----------------------------
 -- Table structure for fee_detailed
 -- ----------------------------
 DROP TABLE IF EXISTS `fee_detailed`;
@@ -306,31 +281,6 @@ CREATE TABLE `notice_read`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '公告阅读状态表（按户为单位）' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for pay_order
--- ----------------------------
-DROP TABLE IF EXISTS `pay_order`;
-CREATE TABLE `pay_order`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `order_no` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '商户订单号（业务唯一，如 PO202508180001）',
-  `residence_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '住宅ID（楼栋-单元-房号，例如 1-2-302）',
-  `bill_id` bigint NOT NULL COMMENT '对应的账单ID（fee_bill.id）',
-  `subject` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '订单标题（支付宝页面展示）',
-  `total_amount` decimal(10, 2) NOT NULL COMMENT '订单金额（元）',
-  `pay_channel` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'ALIPAY' COMMENT '支付渠道：ALIPAY',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '支付状态：0-已关闭，1-待支付，2-支付成功，3-支付失败，4-已退款',
-  `trade_no` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '支付宝交易号（支付成功后回填）',
-  `pay_time` datetime NULL DEFAULT NULL COMMENT '支付成功时间',
-  `notify_time` datetime NULL DEFAULT NULL COMMENT '最近一次异步通知时间',
-  `client_ip` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '下单客户端IP',
-  `extra` json NULL COMMENT '扩展信息（如网关返回字段快照）',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_order_no`(`order_no` ASC) USING BTREE,
-  INDEX `idx_bill_status`(`bill_id` ASC, `status` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '支付订单' ROW_FORMAT = Dynamic;
-
--- ----------------------------
 -- Table structure for repair_assignment
 -- ----------------------------
 DROP TABLE IF EXISTS `repair_assignment`;
@@ -359,6 +309,14 @@ CREATE TABLE `repair_category`  (
   `created_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`category_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+INSERT INTO `repair_category` (`category_name`, `description`) VALUES
+('水电', '水管、电路、灯具等维修'),
+('门窗', '门、窗、锁具及五金维修'),
+('地面', '地面、墙面及相关设施维修'),
+('家具', '桌椅、柜体等家具维修'),
+('空调', '空调设备及通风设施维修'),
+('其他', '其他物业维修事项');
 
 -- ----------------------------
 -- Table structure for repair_evaluation
@@ -399,7 +357,7 @@ CREATE TABLE `repair_file`  (
 DROP TABLE IF EXISTS `repair_order`;
 CREATE TABLE `repair_order`  (
   `order_id` bigint NOT NULL AUTO_INCREMENT COMMENT '报修单ID',
-  `user_id` bigint NOT NULL COMMENT '报修人ID（住户）',
+  `user_id` bigint NULL COMMENT '报修人ID（住户，免登录报修时为空）',
   `category_id` bigint NOT NULL COMMENT '报修类别ID',
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '报修描述',
   `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '待处理' COMMENT '状态（待处理/已指派/维修中/已完成/已取消）',
@@ -413,6 +371,7 @@ CREATE TABLE `repair_order`  (
   `unit_no` int NULL DEFAULT NULL,
   `room_no` int NULL DEFAULT NULL,
   `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `location` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '报修位置',
   PRIMARY KEY (`order_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
@@ -530,3 +489,7 @@ END
 delimiter ;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- Payment and utility billing tables are intentionally not part of this deployment.
+DROP TABLE IF EXISTS `fee_detailed`;
+ALTER TABLE `travel_pass_record` DROP COLUMN IF EXISTS `paid`, DROP COLUMN IF EXISTS `fee`;

@@ -34,7 +34,6 @@ import java.util.Map;
             @RequestParam(defaultValue = "120") Integer duration,
             @RequestParam(defaultValue = "false") Boolean hasVehicle,
             @RequestParam(required = false) String plateNumber,
-            @RequestParam(defaultValue = "false") Boolean paid
     ) {
         User user = loginRegisterService.findByUsername(username);
         if (user == null) {
@@ -50,7 +49,6 @@ import java.util.Map;
         record.setUsername(user.getUsername());
         record.setHasVehicle(hasVehicle);
         record.setPlateNumber(hasVehicle ? plateNumber : null);
-        record.setPaid(paid);
         record.setIssueTime(new Date(now));
         record.setExpireTime(new Date(expireAt));
         record.setStatus("ISSUED");
@@ -189,21 +187,11 @@ import java.util.Map;
                 record.setEntryTime(now);
                 message = "✅ 入场成功";
             } else if ("ENTERED".equals(record.getStatus())) {
-                // 出场：计算停车费
-                long diffMillis = now.getTime() - record.getEntryTime().getTime();
-                long hours = (long) Math.ceil(diffMillis / (1000.0 * 60 * 60));
-
-                double fee = 0;
-                if (record.getHasVehicle()) {
-                    if (diffMillis > 30 * 60 * 1000L) {
-                        fee = hours * 2.0; // 停车费：超过30分钟后，每小时2元
-                    }
-                }
-                travelPassService.markExited(recordId, fee, employeeId);
+                // 出场
+                travelPassService.markExited(recordId, employeeId);
                 record.setExitTime(now);
-                record.setFee(fee);
                 record.setStatus("EXITED");
-                message = "✅ 出场成功，停车费：" + fee + " 元";
+                message = "✅ 出场成功";
             } else if ("EXPIRED".equals(record.getStatus())) {
                 valid = false;
                 message = "二维码已过期";

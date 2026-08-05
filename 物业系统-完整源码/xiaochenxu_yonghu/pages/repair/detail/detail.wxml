@@ -20,7 +20,7 @@
     </view>
     <view class="item">
       <text class="label">报修地址</text>
-      <text class="value">{{order.buildingNo}}栋{{order.unitNo}}单元{{order.roomNo}}室</text>
+      <text class="value">{{order.location || (order.buildingNo + '栋' + order.unitNo + '单元' + order.roomNo + '室')}}</text>
     </view>
     <view class="item">
       <text class="label">联系电话</text>

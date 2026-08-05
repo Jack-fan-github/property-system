@@ -89,8 +89,8 @@ public class TravelPassServiceImpl implements TravelPassService {
     }
 
     @Override
-    public void markExited(Long id, double fee, Long employeeId) {
-        recordMapper.updateExit(id, new Date(), fee, "EXITED", employeeId);
+    public void markExited(Long id, Long employeeId) {
+        recordMapper.updateExit(id, new Date(), "EXITED", employeeId);
         // 清除相关缓存
         redisTemplate.delete("travel:pass:" + id);
     }

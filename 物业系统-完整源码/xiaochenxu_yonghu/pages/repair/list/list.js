@@ -39,8 +39,24 @@ Page({
   loadData(cb) {
     if (this.data.loading) return
     const user = wx.getStorageSync('user')
-    if (!user) {
-      wx.showToast({ title: '请先登录', icon: 'none' })
+    const token = app.globalData.token || wx.getStorageSync('token')
+    if (!user || !token) {
+      const guestOrderIds = wx.getStorageSync('guestRepairOrderIds') || []
+      if (!guestOrderIds.length) {
+        wx.showToast({ title: '请先登录', icon: 'none' })
+        return
+      }
+      this.setData({ loading: true })
+      Promise.all(guestOrderIds.map(id => app.request({ url: `/repair/detail/${id}` })))
+        .then(results => {
+          const list = results.map(res => res && res.data).filter(Boolean)
+          this.setData({ list, loading: false, hasMore: false })
+          if (cb) cb()
+        })
+        .catch(() => {
+          this.setData({ loading: false })
+          if (cb) cb()
+        })
       return
     }
 
@@ -50,6 +66,7 @@ Page({
       url: '/repair/myRepair',
       data: {
         userId: user.userId,
+        phone: user.phone || '',
         page: this.data.page,
         size: this.data.size
       }
