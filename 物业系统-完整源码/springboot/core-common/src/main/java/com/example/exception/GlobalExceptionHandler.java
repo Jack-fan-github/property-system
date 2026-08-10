@@ -4,6 +4,7 @@ import com.example.common.Result;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @ControllerAdvice("com.example.modules")
 public class GlobalExceptionHandler {
@@ -20,5 +21,11 @@ public class GlobalExceptionHandler {
     public Result error(CustomException e) {
         e.printStackTrace();
         return Result.error(e.getCode(),e.getMsg());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseBody
+    public Result uploadSizeExceeded(MaxUploadSizeExceededException e) {
+        return Result.error("400", "单个文件不能超过5MB，单次上传不能超过35MB");
     }
 }

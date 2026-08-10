@@ -5,6 +5,8 @@ import com.example.common.Result;
 import com.example.exception.CustomException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,19 +28,37 @@ public class FileController {
     private static final java.util.Set<String> allowedFolders = new java.util.HashSet<>(
             java.util.Arrays.asList("avatar", "comment", "notice", "post", "repair")
     );
+    private static final long MAX_FILE_SIZE = 5L * 1024 * 1024;
+    private static final java.util.Set<String> allowedContentTypes = java.util.Set.of(
+            "image/jpeg", "image/png", "image/gif", "image/webp",
+            "video/mp4", "video/quicktime", "video/webm", "video/ogg", "video/x-msvideo"
+    );
 
     /**
      * 上传文件
      * 注意：MultipartFile 参数必须加 @RequestParam("file")，且前端上传 key 为 "file"
      */
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
-    public Result upload(@RequestParam("file") MultipartFile file, @RequestParam(value = "folder", required = false) String folder, HttpServletRequest request) {
+    public Result upload(@RequestParam("file") MultipartFile file,
+                         @RequestParam(value = "folder", required = false) String folder,
+                         HttpServletRequest request,
+                         Authentication authentication) {
         if (file == null || file.isEmpty()) {
             throw new CustomException("400", "未接收到文件");
+        }
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new CustomException("400", "单个文件不能超过5MB");
         }
         String targetFolder = folder == null || folder.isBlank() ? "avatar" : folder.trim();
         if (!allowedFolders.contains(targetFolder)) {
             throw new CustomException("400", "文件分类不合法");
+        }
+        if (isAnonymous(authentication) && !"repair".equals(targetFolder)) {
+            throw new CustomException("401", "请登录后上传该类型文件");
+        }
+        String contentType = file.getContentType();
+        if (contentType == null || !allowedContentTypes.contains(contentType.toLowerCase(java.util.Locale.ROOT))) {
+            throw new CustomException("400", "仅支持 JPG、PNG、GIF、WebP 图片或常见视频格式");
         }
         String originalFilename = file.getOriginalFilename();
         String cleanedName = originalFilename == null ? "" : originalFilename.replace("\\", "/");
@@ -50,7 +70,7 @@ public class FileController {
             extension = cleanedName.substring(cleanedName.lastIndexOf('.'));
         }
         if (extension.isEmpty()) {
-            String contentType = file.getContentType();
+            contentType = file.getContentType();
             if ("video/mp4".equalsIgnoreCase(contentType)) extension = ".mp4";
             else if ("video/quicktime".equalsIgnoreCase(contentType)) extension = ".mov";
             else if ("video/webm".equalsIgnoreCase(contentType)) extension = ".webm";
@@ -92,6 +112,10 @@ public class FileController {
         }
         String url = baseUrl + "/files/" + targetFolder + "/" + fileName;
         return Result.success(url);
+    }
+
+    private boolean isAnonymous(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
 
 

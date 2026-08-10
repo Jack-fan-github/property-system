@@ -306,18 +306,35 @@ Page({
       wx.showToast({ title: '请填写联系电话', icon: 'none' })
       return
     }
-    wx.showLoading({ title: '提交中' })
+    this.validateUploadFiles().then(() => {
+      wx.showLoading({ title: '提交中' })
+      const uploadPromises = this.data.files.map(file => this.uploadSingleFile(file))
 
-    const uploadPromises = this.data.files.map(file => {
-      return this.uploadSingleFile(file)
-    })
-
-    Promise.all(uploadPromises).then(urls => {
-      this.submitOrder(urls)
+      return Promise.all(uploadPromises).then(urls => this.submitOrder(urls))
     }).catch(err => {
       wx.hideLoading()
       wx.showToast({ title: err || '附件上传失败', icon: 'none' })
       console.error(err)
+    })
+  },
+
+  validateUploadFiles() {
+    const maxSingleSize = 5 * 1024 * 1024
+    const maxTotalSize = 35 * 1024 * 1024
+    return Promise.all(this.data.files.map(file => new Promise((resolve, reject) => {
+      wx.getFileInfo({
+        filePath: file.path,
+        success: info => resolve(info.size),
+        fail: () => reject('无法读取附件大小，请重新选择')
+      })
+    }))).then(sizes => {
+      if (sizes.some(size => size > maxSingleSize)) {
+        return Promise.reject('单张图片或视频不能超过5MB')
+      }
+      const totalSize = sizes.reduce((total, size) => total + size, 0)
+      if (totalSize > maxTotalSize) {
+        return Promise.reject('全部附件合计不能超过35MB')
+      }
     })
   },
 

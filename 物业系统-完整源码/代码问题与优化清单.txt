@@ -1,0 +1,117 @@
+物业管理系统 - 代码问题与优化清单
+更新日期：2026-08-10
+
+使用说明
+1. 上线前优先处理“高”优先级问题。
+2. 每次完成修复后，将状态改为“已完成”，并补充验证结果。
+3. 不要将数据库密码、JWT 密钥、微信 AppSecret 写入本文件。
+
+一、已完成
+
+[已完成] 上传文件大小与匿名上传限制
+问题：原 /files/** 接口完全放行，任何游客都能上传任意分类文件；单个文件最大 100MB，单次请求最大 200MB。
+处理：
+- 单个上传文件限制为 5MB。
+- 单次 multipart 请求限制为 35MB，Nginx 同步限制 35MB。
+- 游客仅允许上传 folder=repair 的报修附件。
+- 头像、公告、帖子、评论等文件上传必须登录。
+- 仅接受 JPG、PNG、GIF、WebP 图片及现有支持的视频格式。
+- 用户端和员工端报修上传前校验单文件 5MB、附件总量 35MB。
+- 上传超限返回明确的 400 提示。
+涉及文件：
+- springboot/core-system/src/main/java/com/example/modules/system/file/controller/FileController.java
+- springboot/core-auth/src/main/java/com/example/modules/auth/security/SecurityConfig.java
+- springboot/core-api/src/main/resources/resources/application.yml
+- vue_guanliyuan/nginx.conf
+- xiaochenxu_yonghu/pages/repair/submit/submit.js
+- xiaochenxu_yuangong/pages/repair/detail/detail.js
+- springboot/core-common/src/main/java/com/example/exception/GlobalExceptionHandler.java
+待补强：当前小程序逐个文件上传，35MB 总量由客户端预检查。若要防止恶意请求绕过客户端，需要实现“上传批次 ID + Redis 累计配额”。
+
+二、待处理 - 高优先级
+
+[待处理] 越权修改用户、管理员和员工资料/密码
+风险：接口直接使用请求体中的 userId、adminId、employeeId，已登录用户可能篡改为其他人的 ID 后修改资料或密码。
+建议：从 Spring Security 的 SecurityContext 获取当前身份；普通用户和员工只能修改自己；管理员操作单独限制 ADMIN/SUPER_ADMIN 角色并记录审计日志。
+重点文件：
+- springboot/core-auth/src/main/java/com/example/modules/auth/controller/UserAdminController.java
+- springboot/core-system/src/main/java/com/example/modules/system/employee/controller/EmployeeController.java
+
+[待处理] 短信验证码仍是演示实现
+风险：验证码直接在接口响应中返回，不能作为正式登录验证。
+建议：接入短信服务商；验证码只存 Redis，不返回客户端；按手机号、IP、设备限制发送频率和错误次数。
+重点文件：
+- springboot/core-auth/src/main/java/com/example/modules/auth/service/LoginRegisterService.java
+
+[待处理] 员工 GET 登录接口会泄露密码
+风险：用户名和密码会出现在 URL、浏览器历史、代理及访问日志中。
+建议：删除 GET /LoginRegister/employeeLogin，只保留 HTTPS POST 登录。
+重点文件：
+- springboot/core-auth/src/main/java/com/example/modules/auth/controller/UserAdminController.java
+
+[待处理] 本地、测试和生产地址混用
+风险：管理端存在大量 http://localhost:8080；小程序使用临时 trycloudflare 地址；上线后上传、头像、附件可能访问失败。
+建议：统一使用环境变量管理地址。本地使用 http://localhost:8080，生产使用 https://api.实际域名；清理 Vue 页面中的硬编码地址。
+重点文件：
+- vue_guanliyuan/src/
+- xiaochenxu_yonghu/app.js
+- xiaochenxu_yuangong/app.js
+- springboot/core-api/src/main/resources/resources/application.yml
+
+[待处理] 文件存储路径配置未统一
+风险：文件控制器和员工头像上传直接拼接 user.dir/files，未使用 FILE_UPLOAD_PATH；后续迁移对象存储或调整目录容易遗漏。
+建议：使用 @ConfigurationProperties 统一读取存储配置；生产环境改为对象存储，数据库保存对象键或受控 URL。
+重点文件：
+- springboot/core-system/src/main/java/com/example/modules/system/file/controller/FileController.java
+- springboot/core-system/src/main/java/com/example/modules/system/employee/controller/EmployeeController.java
+
+[待处理] 存在可误用于生产的默认密钥和弱密码
+风险：MySQL 默认密码为 123456，JWT、微信凭证也有默认值；环境变量遗漏时可能带着不安全配置上线。
+建议：生产 profile 缺少 MYSQL_PASSWORD、JWT_SECRET、WECHAT_SECRET 时直接启动失败；真实密钥仅保存于 .env 或云密钥管理服务。
+重点文件：
+- .env.example
+- docker-compose.yml
+- springboot/core-api/src/main/java/com/example/MyBatisConfig.java
+- springboot/core-api/src/main/resources/resources/application.yml
+
+三、待处理 - 中优先级
+
+[待处理] Redis KEYS 模式匹配会阻塞缓存服务
+风险：论坛、公告、报修数据变多后，KEYS pattern 会扫描全部键，影响并发访问。
+建议：使用版本化缓存键、精确维护缓存索引，或使用 SCAN 分批处理。
+重点文件：
+- springboot/core-business/src/main/java/com/example/modules/business/repair/service/RepairService.java
+- springboot/core-business/src/main/java/com/example/modules/business/forum/service/PostService.java
+- springboot/core-business/src/main/java/com/example/modules/business/notice/service/NoticeService.java
+
+[待处理] 调试日志会记录敏感信息
+风险：System.out.println 和 printStackTrace 可能输出用户对象、密码哈希或内部异常信息到容器日志。
+建议：使用 SLF4J 统一日志；删除调试打印；禁止记录密码、Token、手机号和完整用户对象；生产日志接入集中收集和告警。
+重点文件：
+- springboot/core-auth/src/main/java/com/example/modules/auth/service/LoginRegisterService.java
+- springboot/core-auth/src/main/java/com/example/modules/auth/controller/UserAdminController.java
+- springboot/core-business/src/main/java/com/example/modules/business/
+- springboot/core-common/src/main/java/com/example/exception/GlobalExceptionHandler.java
+
+[待处理] CORS 配置过宽
+风险：当前允许任意来源、任意方法、任意请求头并携带凭证。
+建议：生产环境仅允许管理端实际域名；小程序不需要依赖浏览器 CORS。
+重点文件：
+- springboot/core-auth/src/main/java/com/example/modules/auth/security/SecurityConfig.java
+
+四、测试与部署待办
+
+[待处理] Docker 全链路验证
+步骤：
+1. 安装 Docker Desktop 并启动。
+2. 在工程根目录创建 .env，替换默认数据库密码和 JWT 密钥。
+3. 执行：docker compose up -d --build
+4. 执行：docker compose ps
+5. 执行：docker compose logs -f backend
+6. 验证管理端登录、用户端报修、员工接单/完成、图片上传和文件访问。
+7. 测试游客只能上传 repair，游客上传 avatar/post/notice 必须失败。
+8. 测试 5MB 单文件限制和 35MB 附件总量限制。
+
+[待处理] 自动化测试不足
+现状：仅发现少量后端控制器测试，未覆盖前端、小程序、鉴权越权、文件上传和 Docker 集成链路。
+建议：优先增加越权测试、匿名上传测试、文件大小测试、登录测试和报修完整流程集成测试。

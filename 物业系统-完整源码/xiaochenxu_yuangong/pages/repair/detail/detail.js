@@ -116,6 +116,12 @@ Page({
       wx.showToast({ title: '请先选择图片', icon: 'none' })
       return
     }
+    try {
+      await this.validateImageSizes()
+    } catch (err) {
+      wx.showToast({ title: err || '附件大小不符合要求', icon: 'none' })
+      return
+    }
     const baseUrl = app.globalData.baseUrl
     const token = app.globalData.token || wx.getStorageSync('token') || ''
     this.setData({ uploading: true })
@@ -170,6 +176,25 @@ Page({
       this.setData({ uploading: false })
       wx.showToast({ title: '上传失败', icon: 'none' })
     }
+  }
+  ,
+  validateImageSizes() {
+    const maxSingleSize = 5 * 1024 * 1024
+    const maxTotalSize = 35 * 1024 * 1024
+    return Promise.all(this.data.images.map(filePath => new Promise((resolve, reject) => {
+      wx.getFileInfo({
+        filePath,
+        success: info => resolve(info.size),
+        fail: () => reject('无法读取图片大小，请重新选择')
+      })
+    }))).then(sizes => {
+      if (sizes.some(size => size > maxSingleSize)) {
+        return Promise.reject('单张图片不能超过5MB')
+      }
+      if (sizes.reduce((total, size) => total + size, 0) > maxTotalSize) {
+        return Promise.reject('全部图片合计不能超过35MB')
+      }
+    })
   }
   ,
   loadEvaluation(orderId) {

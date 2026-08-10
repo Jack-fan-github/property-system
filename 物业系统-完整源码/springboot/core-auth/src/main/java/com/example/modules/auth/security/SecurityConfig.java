@@ -48,13 +48,14 @@ public class SecurityConfig {
                                 "/LoginRegister/wechatLogin",
                                 "/LoginRegister/sendSmsCode",
                                 "/LoginRegister/smsLogin",
-                                "/files/download/**",
-                                "/files/**",
                                 "/repair/categories",
                                 "/repair/submit",
                                 "/repair/detail/**"
 
                         ).permitAll()
+                        // 附件可公开读取；上传接口由 FileController 限制游客仅能上传报修图片。
+                        .requestMatchers(HttpMethod.GET, "/files/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/files/upload").permitAll()
                         // 管理员专用接口
                         .requestMatchers(
                                 "/employee/add",
