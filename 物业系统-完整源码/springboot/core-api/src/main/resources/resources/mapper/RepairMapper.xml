@@ -123,7 +123,7 @@
                  LEFT JOIN repair_category rc ON ro.category_id = rc.category_id
                  LEFT JOIN repair_evaluation re ON ro.order_id = re.assignment_id
         WHERE ro.user_id = #{userId}
-           OR (ro.user_id IS NULL AND #{phone} IS NOT NULL AND #{phone} <> '' AND ro.phone = #{phone})
+           OR (ro.user_id IS NULL AND #{phone} IS NOT NULL AND #{phone} &lt;&gt; '' AND ro.phone = #{phone})
         ORDER BY ro.created_time DESC
     </select>
 
@@ -160,8 +160,16 @@
     </select>
 
     <!-- 查询报修单文件 -->
-    <select id="getRepairFilesByOrderId" resultType="com.example.entity.repair.RepairFile">
-        SELECT file_id, order_id, file_url, file_type
+    <resultMap id="RepairFileResultMap" type="com.example.entity.repair.RepairFile">
+        <id property="fileId" column="file_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="fileUrl" column="file_url"/>
+        <result property="fileType" column="file_type"/>
+        <result property="userId" column="user_id"/>
+    </resultMap>
+
+    <select id="getRepairFilesByOrderId" resultMap="RepairFileResultMap">
+        SELECT file_id, order_id, file_url, file_type, user_id
         FROM repair_file
         WHERE order_id = #{orderId}
     </select>

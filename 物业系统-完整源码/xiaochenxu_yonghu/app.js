@@ -1,6 +1,7 @@
 App({
   globalData: {
-    baseUrl: 'https://ridge-pond-placement-fee.trycloudflare.com',
+    // 本地 Docker 后端；真机调试时请替换为可访问的 HTTPS API 域名
+    baseUrl: 'http://localhost:8080',
     token: '',
     scanHandled: false
   },
@@ -20,8 +21,7 @@ App({
     if (this.globalData.scanHandled) return
     this.globalData.scanHandled = true
     const hasToken = !!(this.globalData.token || wx.getStorageSync('token'))
-    const guestOrders = wx.getStorageSync('guestRepairOrderIds') || []
-    const target = hasToken || guestOrders.length ? '/pages/repair/list/list' : '/pages/login/login'
+    const target = hasToken ? '/pages/repair/list/list' : '/pages/login/login'
     setTimeout(() => wx.reLaunch({ url: target }), 0)
   },
 

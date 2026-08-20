@@ -41,22 +41,7 @@ Page({
     const user = wx.getStorageSync('user')
     const token = app.globalData.token || wx.getStorageSync('token')
     if (!user || !token) {
-      const guestOrderIds = wx.getStorageSync('guestRepairOrderIds') || []
-      if (!guestOrderIds.length) {
-        wx.showToast({ title: '请先登录', icon: 'none' })
-        return
-      }
-      this.setData({ loading: true })
-      Promise.all(guestOrderIds.map(id => app.request({ url: `/repair/detail/${id}` })))
-        .then(results => {
-          const list = results.map(res => res && res.data).filter(Boolean)
-          this.setData({ list, loading: false, hasMore: false })
-          if (cb) cb()
-        })
-        .catch(() => {
-          this.setData({ loading: false })
-          if (cb) cb()
-        })
+      wx.redirectTo({ url: '/pages/login/login' })
       return
     }
 

@@ -28,15 +28,27 @@
     </view>
   </view>
 
-  <view class="section">
-    <view class="section-title">问题描述</view>
+  <view class="section report-section">
+    <view class="section-title">用户报修详情</view>
     <view class="content">{{order.description}}</view>
-    <view class="image-list" wx:if="{{order.files && order.files.length > 0}}">
-      <view class="image-item" wx:for="{{order.files}}" wx:key="fileId">
+    <view class="image-list" wx:if="{{order.userFiles && order.userFiles.length > 0}}">
+      <view class="image-item" wx:for="{{order.userFiles}}" wx:key="fileId">
         <image wx:if="{{item.fileType !== 'video'}}" src="{{item.fileUrl}}" mode="aspectFill" bindtap="previewImage" data-src="{{item.fileUrl}}" class="repair-img"></image>
         <view wx:if="{{item.fileType === 'video'}}" class="video-thumb" bindtap="previewVideo" data-src="{{item.fileUrl}}">
           <text class="video-icon">▶</text>
         </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section maintenance-section" wx:if="{{order.maintenanceFiles && order.maintenanceFiles.length > 0}}">
+    <view class="section-title">维修处理详情</view>
+    <view class="maintenance-meta">{{order.workerName || '维修人员'}} 已提交处理凭证</view>
+    <view class="content">工单状态：{{order.status}}</view>
+    <view class="image-list">
+      <view class="image-item" wx:for="{{order.maintenanceFiles}}" wx:key="fileId">
+        <image wx:if="{{item.fileType !== 'video'}}" src="{{item.fileUrl}}" mode="aspectFill" bindtap="previewImage" data-src="{{item.fileUrl}}" class="repair-img"></image>
+        <view wx:if="{{item.fileType === 'video'}}" class="video-thumb" bindtap="previewVideo" data-src="{{item.fileUrl}}"><text class="video-icon">▶</text></view>
       </view>
     </view>
   </view>

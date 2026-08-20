@@ -27,6 +27,31 @@ Page({
       if (res.code === '200') {
       const expectedStatus = (this.data.order && this.data.order.status) ? this.data.order.status : ''
       const merged = expectedStatus ? { ...res.data, status: expectedStatus } : res.data
+      if (Array.isArray(merged.files)) {
+        merged.files = merged.files.map(file => ({
+          ...file,
+          fileUrl: app.withAuthUrl(file.fileUrl)
+        }))
+      }
+      const ownerId = merged.userId == null ? null : String(merged.userId)
+      const workerId = merged.assignedWorker == null ? null : String(merged.assignedWorker)
+      const uploaderId = file => {
+        const value = file.userID ?? file.userId ?? file.user_id
+        return value == null || value === '' ? null : String(value)
+      }
+      const files = merged.files || []
+      // Prefer explicit uploader IDs. Unknown legacy attachments stay with the
+      // user's report instead of being shown as maintenance evidence.
+      merged.userFiles = files.filter(file => {
+        const id = uploaderId(file)
+        return id == null || id === ownerId
+      })
+      merged.maintenanceFiles = files.filter(file => {
+        const id = uploaderId(file)
+        return id != null && workerId && id === workerId && id !== ownerId
+      })
+      const contactName = merged.name || '业主'
+      merged.contactInitial = contactName.slice(0, 1)
       this.setData({ order: merged, loading: false })
       if (merged.status === '已完成') {
         this.loadEvaluation(merged.orderId)
@@ -38,6 +63,19 @@ Page({
       console.error(err)
       this.setData({ loading: false })
     })
+  },
+
+  callUser(e) {
+    const phone = e.currentTarget.dataset.phone
+    if (phone) wx.makePhoneCall({ phoneNumber: String(phone) })
+  },
+
+  previewImage(e) {
+    const current = e.currentTarget.dataset.src
+    const urls = (this.data.order && this.data.order.files || [])
+      .filter(file => file.fileType !== 'video' && file.fileUrl)
+      .map(file => file.fileUrl)
+    wx.previewImage({ current, urls: urls.length ? urls : [current] })
   },
 
   chooseImages() {

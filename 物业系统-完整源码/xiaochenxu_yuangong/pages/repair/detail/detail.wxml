@@ -40,15 +40,23 @@
       </view>
     </view>
 
-    <!-- 报修详情卡片 -->
+    <!-- 用户报修详情 -->
     <view class="card detail-card">
-      <view class="card-title">报修详情</view>
+      <view class="card-title">用户报修详情</view>
       <view class="desc-box">
-        <text class="desc-text">{{order.description}}</text>
+        <text class="desc-text">{{order.description || '暂无详细描述'}}</text>
       </view>
-      <!-- 如果有图片展示 -->
-      <view class="image-list" wx:if="{{order.images && order.images.length > 0}}">
-         <image class="detail-img" wx:for="{{order.images}}" wx:key="*this" src="{{item}}" mode="aspectFill"></image>
+      <view class="image-list" wx:if="{{order.userFiles && order.userFiles.length > 0}}">
+         <image class="detail-img" wx:for="{{order.userFiles}}" wx:key="fileId" src="{{item.fileUrl}}" mode="aspectFill" bindtap="previewImage" data-src="{{item.fileUrl}}" wx:if="{{item.fileType !== 'video'}}"></image>
+      </view>
+    </view>
+
+    <!-- 维修详情与维修凭证 -->
+    <view class="card detail-card maintenance-card" wx:if="{{order.maintenanceFiles && order.maintenanceFiles.length > 0}}">
+      <view class="card-title maintenance-title">报修处理详情</view>
+      <view class="maintenance-note">维修人员上传的处理凭证图片</view>
+      <view class="image-list">
+        <image class="detail-img" wx:for="{{order.maintenanceFiles}}" wx:key="fileId" src="{{item.fileUrl}}" mode="aspectFill" bindtap="previewImage" data-src="{{item.fileUrl}}" wx:if="{{item.fileType !== 'video'}}"></image>
       </view>
     </view>
 
@@ -57,10 +65,11 @@
       <view class="card-title">联系人信息</view>
       <view class="contact-row">
         <view class="contact-avatar-wrapper">
-          <view class="contact-avatar">{{order.name[0] || '业'}}</view>
+          <view class="contact-avatar">{{order.contactInitial || '业'}}</view>
         </view>
         <view class="contact-info">
           <text class="contact-name">{{order.name || '未知业主'}}</text>
+          <view class="phone-line" wx:if="{{order.phone}}"><text class="icon-small">☎</text><text>{{order.phone}}</text></view>
           <view class="address-line">
             <text class="icon-small">📍</text>
             <text>{{order.location || order.address || (order.buildingNo + '栋' + order.unitNo + '单元' + order.roomNo + '室')}}</text>

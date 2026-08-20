@@ -1,6 +1,6 @@
 # 后端服务详细说明
 
-后端基于 Spring Boot 多模块架构，对管理员端与两类小程序提供统一 REST API，覆盖登录认证、公告、论坛、报修与出行码等业务。
+后端基于 Spring Boot 多模块架构，对管理员端与两类小程序提供统一 REST API，覆盖登录认证、公告和报修等业务。
 
 ## 模块结构
 
@@ -8,7 +8,7 @@
 
 - core-api：应用入口与资源配置
 - core-auth：认证授权、JWT 校验、权限控制
-- core-business：论坛、报修、出行码、公告等业务模块
+- core-business：报修、公告等业务模块
 - core-system：管理员、员工等系统能力
 - core-domain：实体与 DTO
 - core-common：通用工具、线程池、异常处理
@@ -23,9 +23,9 @@
 权限控制位于 [SecurityConfig](/springboot/core-auth/src/main/java/com/example/modules/auth/security/SecurityConfig.java)：
 
 - 放行接口：登录、注册、验证码、微信登录、文件下载
-- 管理员接口：员工管理、后台统计、论坛管理等
-- 普通用户接口：报修、出行码、论坛等
-- 门卫/员工接口：出行码核验、工单处理等
+- 管理员接口：员工管理、后台统计等
+- 普通用户接口：报修等
+- 员工接口：工单处理等
 
 ## 认证流程
 
@@ -35,18 +35,15 @@
 
 ## 角色与权限
 
-- 管理员：后台管理、审核、统计、论坛管理
-- 员工：工单处理、公告发布、出行码核验
-- 用户：报修、论坛、出行码
-- 门卫：出行码核验
+- 管理员：后台管理、审核、统计
+- 员工：工单处理、公告发布
+- 用户：报修
 
 ## 业务接口概览
 
 - 登录注册：/LoginRegister/userLogin、/LoginRegister/adminlogin、/LoginRegister/employeeLogin
 - 公告：/notice/List、/notice/publish、/notice/saveDraft、/notice/{id}
 - 报修：/repair/myRepair、/repair/submit、/repair/dispatchOrder、/repair/complete
-- 论坛：/Forum/SelectPage、/Forum/delMyPost、/Forum/SelectAllComment
-- 出行码：/travel-pass/selectPage、/travel-pass/verify
 
 ## 配置与环境变量
 

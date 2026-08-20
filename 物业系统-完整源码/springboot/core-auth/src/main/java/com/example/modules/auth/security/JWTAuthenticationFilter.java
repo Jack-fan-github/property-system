@@ -36,7 +36,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         String uri = request.getRequestURI();
 
-        // ✅ 放行白名单：支付回调、用户登录、管理员登录
+        // ✅ 放行白名单：用户登录、管理员登录
         if (uri.startsWith("/LoginRegister/userLogin")
                 || uri.startsWith("/LoginRegister/adminLogin")
                 || uri.startsWith("/LoginRegister/adminlogin")

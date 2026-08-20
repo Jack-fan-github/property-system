@@ -3,9 +3,6 @@
     "pages/index/index",
     "pages/login/login",
     "pages/register/register",
-    "pages/forum/index/index",
-    "pages/forum/detail/detail",
-    "pages/forum/publish/publish",
     "pages/profile/index/index",
     "pages/profile/edit/edit",
     "pages/profile/change-password/change-password",
@@ -13,10 +10,7 @@
     "pages/notice/detail/detail",
     "pages/repair/list/list",
     "pages/repair/submit/submit",
-    "pages/repair/detail/detail",
-    "pages/pass/index/index",
-    "pages/pass/record/list/list",
-    "pages/pass/record/detail/detail"
+    "pages/repair/detail/detail"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -35,12 +29,6 @@
         "text": "首页",
         "iconPath": "assets/tabbar/home.png",
         "selectedIconPath": "assets/tabbar/home-active.png"
-      },
-      {
-        "pagePath": "pages/forum/index/index",
-        "text": "社区圈",
-        "iconPath": "assets/tabbar/forum.png",
-        "selectedIconPath": "assets/tabbar/forum-active.png"
       },
       {
         "pagePath": "pages/profile/index/index",

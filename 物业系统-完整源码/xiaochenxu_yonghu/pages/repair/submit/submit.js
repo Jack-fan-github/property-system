@@ -2,7 +2,6 @@ const app = getApp()
 
 Page({
   data: {
-    guestMode: false,
     categories: [],
     categoryIndex: null,
     locations: ['食堂', '教学楼', '宿舍', '体育馆', '其他'],
@@ -24,13 +23,16 @@ Page({
   },
 
   onLoad(options) {
-    const guestMode = options && options.guest === '1'
     const user = wx.getStorageSync('user')
+    const token = app.globalData.token || wx.getStorageSync('token') || user?.token
+    if (!user || !token) {
+      wx.redirectTo({ url: '/pages/login/login' })
+      return
+    }
     const buildingNo = user?.buildingNo || '1'
     const unitNo = user?.unitNo || '1'
     const roomNo = user?.roomNo || '101'
     this.setData({
-      guestMode,
       phone: user?.phone || '',
       buildingNo,
       unitNo,
@@ -363,14 +365,6 @@ Page({
     }).then(res => {
       wx.hideLoading()
       if (res.code === '200') {
-        if (!user.userId && res.data) {
-          const guestOrderIds = wx.getStorageSync('guestRepairOrderIds') || []
-          const orderId = typeof res.data === 'object' ? res.data.orderId : res.data
-          if (orderId && !guestOrderIds.includes(orderId)) {
-            guestOrderIds.push(orderId)
-            wx.setStorageSync('guestRepairOrderIds', guestOrderIds)
-          }
-        }
         wx.showToast({ title: '提交成功' })
         setTimeout(() => {
           wx.navigateBack()

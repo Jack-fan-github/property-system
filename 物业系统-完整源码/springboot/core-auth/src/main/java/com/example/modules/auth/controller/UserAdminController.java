@@ -203,17 +203,7 @@ public class UserAdminController {
     //管理员登录
     @PostMapping("/adminlogin")
     public Result Adminlogin(@RequestBody Admin admin) {
-        // 验证验证码
-        if (admin.getCaptchaId() == null || admin.getCaptchaCode() == null) {
-            throw new CustomException("400", "请输入验证码");
-        }
-        
-        if (!validateCaptcha(admin.getCaptchaId(), admin.getCaptchaCode())) {
-            throw new CustomException("400", "验证码错误或已过期");
-        }
-        
-        // 调用 Service 层登录逻辑（Spring Security 自动验证密码）
-        System.out.println("111");
+        // 管理端采用账号密码登录，不依赖 Redis 验证码服务。
         Admin db = loginRegisterService.adminLogin(admin);
         return Result.success(db);
     }

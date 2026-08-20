@@ -26,6 +26,16 @@ public class RepairFile {
         this.userID = userID;
     }
 
+    // JSON/MyBatis compatibility: some clients use userId while the legacy
+    // field is named userID.
+    public Long getUserId() {
+        return userID;
+    }
+
+    public void setUserId(Long userId) {
+        this.userID = userId;
+    }
+
     public void setFileId(Long fileId) {
         this.fileId = fileId;
     }

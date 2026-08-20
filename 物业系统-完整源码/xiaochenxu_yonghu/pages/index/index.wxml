@@ -43,18 +43,6 @@
         </view>
         <text class="service-text">物业报修</text>
       </view>
-      <view class="service-item" bindtap="navigateTo" data-url="/pages/pass/index/index">
-        <view class="service-icon bg-purple">
-          <text class="iconfont">🚗</text>
-        </view>
-        <text class="service-text">出行码</text>
-      </view>
-      <view class="service-item" bindtap="switchTab" data-url="/pages/forum/index/index">
-        <view class="service-icon bg-red">
-          <text class="iconfont">💬</text>
-        </view>
-        <text class="service-text">邻里互动</text>
-      </view>
       <view class="service-item" bindtap="switchTab" data-url="/pages/profile/index/index">
         <view class="service-icon bg-cyan">
           <text class="iconfont">👤</text>

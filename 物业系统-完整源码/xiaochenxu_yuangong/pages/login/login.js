@@ -24,6 +24,14 @@ Page({
     this.setData({ isPwdFocus: false })
   },
 
+  onUsernameInput(e) {
+    this.setData({ username: e.detail.value })
+  },
+
+  onPasswordInput(e) {
+    this.setData({ password: e.detail.value })
+  },
+
   handleLogin() {
     if (!this.data.username || !this.data.password) {
       wx.showToast({ title: '请输入用户名和密码', icon: 'none' })

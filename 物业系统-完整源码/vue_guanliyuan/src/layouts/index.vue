@@ -29,6 +29,8 @@
               <span>数据看板</span>
             </template>
             <el-menu-item index="/dashboard">数据统计</el-menu-item>
+            <el-menu-item index="/analytics/repair">工单分析</el-menu-item>
+            <el-menu-item index="/analytics/inspection">巡检分析</el-menu-item>
           </el-sub-menu>
 
           <el-sub-menu index="system-notice">
@@ -63,24 +65,13 @@
             <el-menu-item index="/repair/feedback">服务评价</el-menu-item>
           </el-sub-menu>
 
-          <el-sub-menu index="qrcode">
+          <el-sub-menu index="inspection">
             <template #title>
-              <el-icon><Grid /></el-icon>
-              <span>智能通行</span>
+              <el-icon><Monitor /></el-icon>
+              <span>巡检管理</span>
             </template>
-            <el-menu-item index="/travel/pass-list">通行码管理</el-menu-item>
+            <el-menu-item index="/inspection">任务与点位</el-menu-item>
           </el-sub-menu>
-
-          <el-sub-menu index="community">
-            <template #title>
-              <el-icon><ChatLineSquare /></el-icon>
-              <span>社区论坛</span>
-            </template>
-            <el-menu-item index="/forum/posts">帖子管理</el-menu-item>
-            <el-menu-item index="/forum/comments">评论管理</el-menu-item>
-            <el-menu-item index="/forum/mute">禁言管理</el-menu-item>
-          </el-sub-menu>
-
 
           <el-sub-menu index="monitor">
             <template #title>
@@ -111,7 +102,7 @@
                   <img :src="defaultAvatar" />
                 </el-avatar>
                 <div class="user-info">
-                  <span class="username">{{ userInfo?.nickname || '管理员' }}</span>
+                  <span class="username">{{ userInfo?.nickname || userInfo?.username || '管理员' }}</span>
                   <span class="role-badge">Admin</span>
                 </div>
                 <el-icon class="dropdown-icon"><CaretBottom /></el-icon>
@@ -153,8 +144,6 @@ import {
   Bell,
   User,
   Tools,
-  Grid,
-  ChatLineSquare,
   Monitor,
   SwitchButton,
   CaretBottom,

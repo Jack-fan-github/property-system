@@ -17,8 +17,6 @@ import javax.sql.DataSource;
         "com.example.modules.business.*.*.mapper",
         "com.example.modules.system.*.mapper",
         "com.example.modules.notice.mapper",
-        "com.example.modules.travelpass.mapper",
-        "com.example.modules.forum.mapper",
         "com.example.modules.repair.mapper"
 })
 public class MyBatisConfig {
@@ -27,7 +25,7 @@ public class MyBatisConfig {
     public DataSource dataSource() {
         HikariDataSource ds = new HikariDataSource();
         ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        ds.setJdbcUrl(System.getenv().getOrDefault("MYSQL_URL", "jdbc:mysql://localhost:3306/hr?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true"));
+        ds.setJdbcUrl(System.getenv().getOrDefault("MYSQL_URL", "jdbc:mysql://localhost:3306/hr?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci"));
         ds.setUsername(System.getenv().getOrDefault("MYSQL_USER", "root"));
         ds.setPassword(System.getenv().getOrDefault("MYSQL_PASSWORD", "123456"));
         return ds;

@@ -106,7 +106,7 @@
     </div>
 
     <!-- 详情弹窗 -->
-    <el-dialog v-model="detailVisible" title="工单详情" width="800px" class="modern-dialog detail-dialog" destroy-on-close>
+    <el-dialog v-model="detailVisible" title="工单详情" width="800px" class="modern-dialog detail-dialog" destroy-on-close append-to-body :lock-scroll="true">
       <!-- 状态步骤条 -->
       <div class="step-container">
         <el-steps :active="getStepActive(detail.status)" finish-status="success" align-center>
@@ -154,26 +154,36 @@
           </div>
         </el-tab-pane>
 
-        <!-- 详细描述与附件 Tab -->
-        <el-tab-pane label="描述与附件">
+        <!-- 报修与维修详情 Tab -->
+        <el-tab-pane label="报修与维修">
           <div class="desc-section">
-            <div class="section-title">故障描述</div>
-            <div class="desc-content">{{ detail.description }}</div>
-            
-            <div class="section-title" style="margin-top: 20px;">附件列表</div>
-            <div class="attachment-list" v-if="detail.files && detail.files.length">
-              <div v-for="(file, index) in detail.files" :key="index" class="attachment-item">
-                <el-image 
-                  v-if="isImage(file.fileUrl)"
-                  :src="file.fileUrl" 
-                  :preview-src-list="detail.files.map(f => f.fileUrl)"
-                  fit="cover"
-                  class="attachment-img"
-                />
-                <video v-else :src="file.fileUrl" controls class="attachment-video"></video>
+            <div class="detail-block report-block">
+              <div class="section-title">用户报修详情</div>
+              <div class="detail-caption">用户提交的故障描述和附件</div>
+              <div class="desc-content">{{ detail.description || '暂无文字描述' }}</div>
+              <div class="section-title attachment-title">用户报修图片</div>
+              <div class="attachment-list" v-if="detail.userFiles && detail.userFiles.length">
+                <div v-for="(file, index) in detail.userFiles" :key="`user-${index}`" class="attachment-item">
+                  <el-image v-if="isImage(file.fileUrl)" :src="file.fileUrl" :preview-src-list="detail.userFiles.map(f => f.fileUrl)" fit="cover" class="attachment-img" />
+                  <video v-else :src="file.fileUrl" controls class="attachment-video"></video>
+                </div>
               </div>
+              <el-empty v-else description="用户未上传图片" :image-size="50" />
             </div>
-            <el-empty v-else description="暂无附件" :image-size="60" />
+
+            <div class="detail-block maintenance-block">
+              <div class="section-title">报修处理详情</div>
+              <div class="detail-caption">{{ detail.workerName || '维修人员' }} 的处理凭证</div>
+              <div class="maintenance-status">当前状态：{{ detail.status }}</div>
+              <div class="section-title attachment-title">维修处理图片</div>
+              <div class="attachment-list" v-if="detail.maintenanceFiles && detail.maintenanceFiles.length">
+                <div v-for="(file, index) in detail.maintenanceFiles" :key="`maintenance-${index}`" class="attachment-item">
+                  <el-image v-if="isImage(file.fileUrl)" :src="file.fileUrl" :preview-src-list="detail.maintenanceFiles.map(f => f.fileUrl)" fit="cover" class="attachment-img" />
+                  <video v-else :src="file.fileUrl" controls class="attachment-video"></video>
+                </div>
+              </div>
+              <el-empty v-else description="暂无维修处理附件" :image-size="50" />
+            </div>
           </div>
         </el-tab-pane>
 
@@ -364,7 +374,23 @@ const openDetail = async (row) => {
   const res = await request.get(`/repair/detail/${row.orderId}`);
   if (res.code === "200") {
     const category = categories.value.find(c => c.categoryId === res.data.categoryId);
-    detail.value = { ...res.data, categoryName: category ? category.categoryName : "未知类别" };
+    const data = { ...res.data, categoryName: category ? category.categoryName : "未知类别" };
+    const ownerId = data.userId == null ? null : String(data.userId);
+    const workerId = data.assignedWorker == null ? null : String(data.assignedWorker);
+    const files = Array.isArray(data.files) ? data.files : [];
+    const uploaderId = (file) => {
+      const id = file.userId ?? file.userID ?? file.user_id;
+      return id == null || id === "" ? null : String(id);
+    };
+    data.userFiles = files.filter(file => {
+      const id = uploaderId(file);
+      return id == null || id === ownerId;
+    });
+    data.maintenanceFiles = files.filter(file => {
+      const id = uploaderId(file);
+      return id != null && workerId && id === workerId && id !== ownerId;
+    });
+    detail.value = data;
     detailVisible.value = true;
   }
 };
@@ -456,7 +482,12 @@ onMounted(async () => {
 
 .detail-dialog :deep(.el-dialog__body) {
   padding-top: 10px;
+  max-height: calc(100vh - 190px);
+  overflow-y: auto;
 }
+
+:global(.detail-dialog.el-dialog) { max-width: calc(100vw - 48px); margin-top: 7vh !important; }
+:global(.el-overlay) { z-index: 3000 !important; }
 
 .step-container {
   padding: 20px 0;
@@ -472,6 +503,12 @@ onMounted(async () => {
 .info-section, .desc-section, .eval-section {
   padding: 10px;
 }
+
+.detail-block { padding: 18px; border: 1px solid #e7edf5; border-radius: 10px; background: #fff; margin-bottom: 16px; }
+.maintenance-block { border-color: #ccefe3; background: #fbfffd; }
+.detail-caption { margin: -5px 0 12px; color: #7a8798; font-size: 13px; }
+.maintenance-status { display: inline-block; margin-bottom: 10px; padding: 5px 10px; border-radius: 6px; color: #0f8a68; background: #e9f8f2; font-size: 13px; }
+.attachment-title { margin-top: 18px; }
 
 .worker-tag {
   display: flex;

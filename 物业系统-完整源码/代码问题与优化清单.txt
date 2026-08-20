@@ -77,11 +77,10 @@
 三、待处理 - 中优先级
 
 [待处理] Redis KEYS 模式匹配会阻塞缓存服务
-风险：论坛、公告、报修数据变多后，KEYS pattern 会扫描全部键，影响并发访问。
+风险：公告、报修数据变多后，KEYS pattern 会扫描全部键，影响并发访问。
 建议：使用版本化缓存键、精确维护缓存索引，或使用 SCAN 分批处理。
 重点文件：
 - springboot/core-business/src/main/java/com/example/modules/business/repair/service/RepairService.java
-- springboot/core-business/src/main/java/com/example/modules/business/forum/service/PostService.java
 - springboot/core-business/src/main/java/com/example/modules/business/notice/service/NoticeService.java
 
 [待处理] 调试日志会记录敏感信息

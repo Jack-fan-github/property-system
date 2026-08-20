@@ -10,11 +10,5 @@ import java.util.Map;
 public interface StatsMapper {
     Integer countUsers();
     Integer countAdmins();
-    Integer countForumPosts();
-    Integer countForumComments();
-    Integer countTravelPassToday();
     List<Map<String, Object>> loginTrend(@Param("days") Integer days);
-    List<Map<String, Object>> postTrend(@Param("days") Integer days);
-    List<Map<String, Object>> commentTrend(@Param("days") Integer days);
-    List<Map<String, Object>> travelTrend(@Param("days") Integer days);
 }

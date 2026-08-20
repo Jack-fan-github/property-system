@@ -52,7 +52,7 @@
 import { onMounted, reactive, ref, computed } from "vue";
 import * as echarts from "echarts";
 import request from "@/api/request.js";
-import { User, UserFilled, Document, ChatDotRound, Bicycle, Refresh } from "@element-plus/icons-vue";
+import { User, UserFilled, Refresh } from "@element-plus/icons-vue";
 
 const loading = ref(false);
 const overview = reactive({});
@@ -73,27 +73,6 @@ const statsItems = computed(() => [
     icon: "UserFilled", 
     bg: "#f3e8ff",
     color: "#9333ea"
-  },
-  { 
-    label: "帖子总数", 
-    value: overview.postCount, 
-    icon: "Document", 
-    bg: "#ffedd5",
-    color: "#f97316"
-  },
-  { 
-    label: "评论互动", 
-    value: overview.commentCount, 
-    icon: "ChatDotRound", 
-    bg: "#dcfce7",
-    color: "#16a34a"
-  },
-  { 
-    label: "出行码申请数量", 
-    value: overview.travelIssuedToday, 
-    icon: "Bicycle", 
-    bg: "#ccfbf1",
-    color: "#0d9488"
   }
 ]);
 
@@ -135,7 +114,7 @@ const loadTrend = async () => {
         extraCssText: 'box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border-radius: 8px;'
       },
       legend: { 
-        data: ["登录人数", "发帖量", "评论量", "出行码使用"],
+        data: ["登录人数"],
         bottom: 0,
         icon: "circle",
         itemGap: 24,
@@ -177,33 +156,6 @@ const loadTrend = async () => {
             ])
           }
         },
-        {
-          name: "发帖量",
-          type: "line",
-          smooth: true,
-          showSymbol: false,
-          data: (data.post || []).map((i) => i.cnt),
-          itemStyle: { color: '#f59e0b' },
-          lineStyle: { width: 3 }
-        },
-        {
-          name: "评论量",
-          type: "line",
-          smooth: true,
-          showSymbol: false,
-          data: (data.comment || []).map((i) => i.cnt),
-          itemStyle: { color: '#10b981' },
-          lineStyle: { width: 3 }
-        },
-        {
-          name: "出行码使用",
-          type: "line",
-          smooth: true,
-          showSymbol: false,
-          data: (data.travel || []).map((i) => i.cnt),
-          itemStyle: { color: '#06b6d4' },
-          lineStyle: { width: 3 }
-        },
       ],
     };
     
@@ -218,6 +170,7 @@ const loadTrend = async () => {
     console.error(e);
   }
 };
+
 
 onMounted(async () => {
   await refreshData();

@@ -12,7 +12,8 @@ Page({
 
   refreshUser() {
     const user = wx.getStorageSync('user')
-    if (user) {
+    const token = app.globalData.token || wx.getStorageSync('token')
+    if (user && token) {
       // Re-fetch latest user data
       app.request({
         url: '/LoginRegister/GetUserData',
@@ -25,7 +26,7 @@ Page({
         }
       })
     } else {
-      wx.reLaunch({ url: '/pages/login/login' })
+      this.setData({ user: null })
     }
     this.setData({
       defaultAvatar: app.withAuthUrl(`${app.globalData.baseUrl}/files/download/img.jpg`)
@@ -33,11 +34,23 @@ Page({
   },
 
   goToEdit() {
+    if (!this.data.user) {
+      this.goToLogin()
+      return
+    }
     wx.navigateTo({ url: '/pages/profile/edit/edit' })
   },
 
   goToChangePwd() {
+    if (!this.data.user) {
+      this.goToLogin()
+      return
+    }
     wx.navigateTo({ url: '/pages/profile/change-password/change-password' })
+  },
+
+  goToLogin() {
+    wx.navigateTo({ url: '/pages/login/login' })
   },
 
   logout() {

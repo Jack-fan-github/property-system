@@ -15,7 +15,19 @@
     "enhance": false,
     "showShadowRootInWxmlPanel": false,
     "packNpmRelationList": [],
-    "ignoreUploadUnusedFiles": true
+    "ignoreUploadUnusedFiles": true,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "packNpmManually": false,
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
   "condition": {},
@@ -27,5 +39,7 @@
     "ignore": [],
     "include": []
   },
-  "appid": "YOUR_WECHAT_APPID"
+  "appid": "wxd4a3d4b4e2ab4b5f",
+  "libVersion": "3.14.2",
+  "simulatorPluginLibVersion": {}
 }

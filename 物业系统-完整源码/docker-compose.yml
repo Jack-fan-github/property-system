@@ -10,7 +10,6 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./数据库/hr.sql:/docker-entrypoint-initdb.d/01-hr.sql:ro
-      - ./数据库/guest_repair_migration.sql:/docker-entrypoint-initdb.d/02-guest-repair.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$${MYSQL_ROOT_PASSWORD}"]
       interval: 5s
@@ -28,11 +27,13 @@ services:
       context: ./springboot
     restart: unless-stopped
     environment:
-      MYSQL_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-hr}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      MYSQL_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-hr}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci
       MYSQL_USER: root
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-123456}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
       FILE_UPLOAD_PATH: /app/files
       FILE_ACCESS_URL: http://localhost:8080/files/download
       JWT_SECRET: ${JWT_SECRET:-property-system-jwt-secret-key-2024}

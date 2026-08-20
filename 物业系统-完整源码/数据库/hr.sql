@@ -357,7 +357,7 @@ CREATE TABLE `repair_file`  (
 DROP TABLE IF EXISTS `repair_order`;
 CREATE TABLE `repair_order`  (
   `order_id` bigint NOT NULL AUTO_INCREMENT COMMENT '报修单ID',
-  `user_id` bigint NULL COMMENT '报修人ID（住户，免登录报修时为空）',
+  `user_id` bigint NOT NULL COMMENT '报修人ID（住户，必须登录后报修）',
   `category_id` bigint NOT NULL COMMENT '报修类别ID',
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '报修描述',
   `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '待处理' COMMENT '状态（待处理/已指派/维修中/已完成/已取消）',
@@ -408,7 +408,7 @@ CREATE TABLE `travel_pass_record`  (
   `username` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户名',
   `has_vehicle` tinyint(1) NULL DEFAULT 0 COMMENT '是否有车辆',
   `plate_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '车牌号',
-  `paid` tinyint(1) NULL DEFAULT 0 COMMENT '是否支付通行费（住户费）',
+  `paid` tinyint(1) NULL DEFAULT 0 COMMENT '通行费结算状态',
   `issue_time` datetime NOT NULL COMMENT '二维码生成时间',
   `expire_time` datetime NULL DEFAULT NULL COMMENT '二维码过期时间',
   `entry_time` datetime NULL DEFAULT NULL COMMENT '入场时间',

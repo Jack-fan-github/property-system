@@ -53,7 +53,7 @@ public class FileController {
         if (!allowedFolders.contains(targetFolder)) {
             throw new CustomException("400", "文件分类不合法");
         }
-        if (isAnonymous(authentication) && !"repair".equals(targetFolder)) {
+        if (isAnonymous(authentication)) {
             throw new CustomException("401", "请登录后上传该类型文件");
         }
         String contentType = file.getContentType();

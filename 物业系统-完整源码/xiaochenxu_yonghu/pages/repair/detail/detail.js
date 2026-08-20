@@ -25,7 +25,7 @@ Page({
 
   previewImage(e) {
     const current = e.currentTarget.dataset.src
-    const urls = this.data.order.files
+    const urls = (this.data.order.files || [])
       .filter(f => f.fileType !== 'video')
       .map(f => f.fileUrl)
     wx.previewImage({
@@ -98,6 +98,21 @@ Page({
             fileUrl: app.withAuthUrl(f.fileUrl)
           }))
         }
+        const ownerId = order.userId == null ? null : String(order.userId)
+        const workerId = order.assignedWorker == null ? null : String(order.assignedWorker)
+        const uploaderId = file => {
+          const value = file.userID ?? file.userId ?? file.user_id
+          return value == null || value === '' ? null : String(value)
+        }
+        const files = order.files || []
+        order.userFiles = files.filter(file => {
+          const id = uploaderId(file)
+          return id == null || id === ownerId
+        })
+        order.maintenanceFiles = files.filter(file => {
+          const id = uploaderId(file)
+          return id != null && workerId && id === workerId && id !== ownerId
+        })
         this.setData({ order })
       } else {
         wx.showToast({ title: '加载失败', icon: 'none' })

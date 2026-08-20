@@ -15,7 +15,8 @@
           <view class="icon">👤</view>
           <input class="input" 
             placeholder="请输入员工工号/账号" 
-            model:value="{{username}}" 
+            value="{{username}}"
+            bindinput="onUsernameInput"
             bindfocus="onUserFocus"
             bindblur="onUserBlur"
           />
@@ -25,7 +26,8 @@
           <input class="input" 
             password 
             placeholder="请输入登录密码" 
-            model:value="{{password}}" 
+            value="{{password}}"
+            bindinput="onPasswordInput"
             bindfocus="onPwdFocus"
             bindblur="onPwdBlur"
           />

@@ -6,10 +6,6 @@
     "pages/repair/detail/detail",
     "pages/notice/list/list",
     "pages/notice/add/add",
-    "pages/scan/scan",
-    "pages/forum/index/index",
-    "pages/forum/detail/detail",
-    "pages/forum/publish/publish",
     "pages/profile/profile",
     "pages/profile/change-password/change-password"
   ],

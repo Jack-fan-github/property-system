@@ -1,11 +1,18 @@
-redis:
-  host: ${REDIS_HOST:localhost}
-  port: ${REDIS_PORT:6379}
-  #password: yourRedisPassword  # 如果有密码
-  timeout: 60000
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 60000
+
 server:
   port: 8080
+  # Explicitly keep request/response text (including Chinese employee fields) in UTF-8.
   servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
     multipart:
       max-file-size: 5MB
       max-request-size: 35MB

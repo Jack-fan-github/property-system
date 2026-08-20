@@ -1,8 +1,6 @@
 package com.example.modules.business.repair.service;
 
 import com.example.entity.Employee;
-import com.example.entity.Forum.ForumAttachment;
-import com.example.entity.Forum.ForumPost;
 import com.example.entity.repair.*;
 import com.example.modules.business.repair.mapper.RepairMapper;
 import com.github.pagehelper.PageHelper;

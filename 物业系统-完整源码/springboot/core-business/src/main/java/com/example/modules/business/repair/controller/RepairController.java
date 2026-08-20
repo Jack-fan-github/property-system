@@ -1,7 +1,6 @@
 package com.example.modules.business.repair.controller;
 
 import com.example.common.Result;
-import com.example.entity.Forum.ForumPost;
 import com.example.entity.repair.RepairAssignment;
 import com.example.entity.repair.RepairCategory;
 import com.example.entity.repair.RepairOrder;
@@ -56,9 +55,11 @@ public class RepairController {
     //    提交维修内容
     @PostMapping("/submit")
     public Result addRepairOrder(@RequestBody RepairOrder repairOrder, Authentication authentication) {
-        if (authentication != null && authentication.getPrincipal() instanceof User user) {
-            repairOrder.setUserId(user.getUserId());
+        if (authentication == null || !authentication.isAuthenticated()
+                || !(authentication.getPrincipal() instanceof User user)) {
+            return Result.error("请先登录后再提交报修");
         }
+        repairOrder.setUserId(user.getUserId());
         System.out.println(repairOrder);
         Long orderId = repairService.addRepairOrder(repairOrder);
         

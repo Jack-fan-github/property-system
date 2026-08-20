@@ -2,7 +2,6 @@ package com.example.modules.business.notice.service;
 
 import com.example.common.Result;
 import com.example.entity.Employee;
-import com.example.entity.Forum.ForumPost;
 import com.example.entity.User;
 import com.example.entity.notice.*;
 import com.example.modules.business.notice.mapper.NoticeMapper;

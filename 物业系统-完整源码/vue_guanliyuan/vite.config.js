@@ -9,6 +9,17 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers' // 组�
 
 // https://vite.dev/config/
 export default defineConfig({
+  // 本地 npm run dev 时，将前端的 /api 请求转发到 Spring Boot。
+  // 生产环境由 nginx.conf 提供同样的 /api 反向代理。
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
   plugins: [
     vue(),
     vueDevTools(),

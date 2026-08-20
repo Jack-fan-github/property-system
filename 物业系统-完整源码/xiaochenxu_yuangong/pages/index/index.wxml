@@ -6,12 +6,12 @@
     </view>
     <view class="hero-card" bindtap="goToProfile">
       <view class="avatar-box">
-        <view class="avatar">{{employee.name[0]}}</view>
+        <view class="avatar">{{initials}}</view>
         <view class="status-badge">在线</view>
       </view>
       <view class="info">
         <view class="name-row">
-          <text class="name">{{employee.name || '员工'}}</text>
+          <text class="name">{{employee.nickname || employee.name || employee.username || '员工'}}</text>
           <text class="tag">正式员工</text>
         </view>
         <text class="role">工号：{{employee.no || employee.username}}</text>
@@ -27,7 +27,7 @@
     <view class="menu-grid">
       <view class="menu-item" wx:for="{{menuList}}" wx:key="id" bindtap="handleMenuClick" data-id="{{item.id}}" hover-class="menu-hover">
         <view class="icon-box" style="background: {{item.color}}18; color: {{item.color}}">
-          <text class="icon-text">{{item.name[0]}}</text>
+          <text class="icon-text">{{item.iconText}}</text>
         </view>
         <text class="menu-name">{{item.name}}</text>
       </view>

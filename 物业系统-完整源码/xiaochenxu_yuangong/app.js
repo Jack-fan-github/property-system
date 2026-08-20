@@ -1,6 +1,7 @@
 App({
   globalData: {
-    baseUrl: 'https://ridge-pond-placement-fee.trycloudflare.com',
+    // 本地 Docker 后端；真机调试时请替换为可访问的 HTTPS API 域名
+    baseUrl: 'http://localhost:8080',
     token: '',
     employee: null
   },

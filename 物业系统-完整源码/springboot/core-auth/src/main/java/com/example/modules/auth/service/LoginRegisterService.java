@@ -505,30 +505,32 @@ public class LoginRegisterService {
     public Admin adminLogin(Admin loginAdmin) {
         String username = loginAdmin.getUsername();
         String password = loginAdmin.getPassword();
-
+        Admin dbAdmin = loginRegisterMapper.selectAdminByUsername(username);
+        if (dbAdmin == null) throw new CustomException("500", "管理员不存在");
+        if (!passwordEncoder.matches(password, dbAdmin.getPassword())) {
+            throw new CustomException("500", "密码错误");
+        }
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password)
-            );
-
-            Admin dbAdmin = loginRegisterMapper.selectAdminByUsername(username);
-            if (dbAdmin == null) {
-                throw new CustomException("500", "管理员不存在");
-            }
 
             String token = TokenUtils.createToken(dbAdmin.getUsername(), String.valueOf(dbAdmin.getAdminId()),"ROLE_ADMIN");
 
             dbAdmin.setToken(token);
             dbAdmin.setCodeId(formatCode("002", dbAdmin.getAdminId()));
 
-            // Redis 存储 Key: login:admin:{adminId}
-            String redisKey = "login:admin:" + dbAdmin.getAdminId();
-            redisTemplate.opsForValue().set(redisKey, dbAdmin, TOKEN_EXPIRE_SECONDS, TimeUnit.SECONDS);
+            // Redis 仅用于缓存登录信息；缓存不可用时不应把已通过的密码认证报成“密码错误”。
+            try {
+                String redisKey = "login:admin:" + dbAdmin.getAdminId();
+                redisTemplate.opsForValue().set(redisKey, dbAdmin, TOKEN_EXPIRE_SECONDS, TimeUnit.SECONDS);
+            } catch (Exception cacheException) {
+                System.err.println("管理员登录缓存写入失败，继续使用 JWT 登录: " + cacheException.getMessage());
+            }
 
             return dbAdmin;
 
+        } catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
-            throw new CustomException("500", "密码错误");
+            throw new CustomException("500", "登录服务暂时不可用");
         }
     }
 

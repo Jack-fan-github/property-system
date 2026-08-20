@@ -48,14 +48,10 @@ public class SecurityConfig {
                                 "/LoginRegister/wechatLogin",
                                 "/LoginRegister/sendSmsCode",
                                 "/LoginRegister/smsLogin",
-                                "/repair/categories",
-                                "/repair/submit",
-                                "/repair/detail/**"
-
+                                "/repair/categories"
                         ).permitAll()
-                        // 附件可公开读取；上传接口由 FileController 限制游客仅能上传报修图片。
+                        // 附件可公开读取；上传接口必须登录。
                         .requestMatchers(HttpMethod.GET, "/files/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/files/upload").permitAll()
                         // 管理员专用接口
                         .requestMatchers(
                                 "/employee/add",
@@ -73,8 +69,6 @@ public class SecurityConfig {
                                 "/employee/selectById/**"
                         ).hasAnyRole("EMPLOYEE", "ADMIN", "SUPER_ADMIN")
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                        .requestMatchers("/travel-pass/selectPage").hasRole("ADMIN")
-                        .requestMatchers("/Forum/SelectAllComment", "/Forum/deleteComment/**").hasRole("ADMIN")
                         .requestMatchers(
                                 "/LoginRegister/selectAllUser",
                                 "/LoginRegister/approval",
@@ -101,13 +95,9 @@ public class SecurityConfig {
                                 "/repair/byWorker",
                                 "/repair/evaluation/**"
                         ).hasAnyRole("REPAIRER", "ADMIN", "EMPLOYEE")
-                        // 门卫权限（核销）
-                        .requestMatchers("/travel-pass/verify").hasAnyRole("GUARD", "ADMIN", "EMPLOYEE")
                         // 普通用户接口
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         // 需要登录即可访问（管理员也可访问）
-                        .requestMatchers("/travel-pass/**").authenticated()
-                        .requestMatchers("/Forum/**").authenticated()
                         // 其他接口必须登录
                         .anyRequest().authenticated()
                 )

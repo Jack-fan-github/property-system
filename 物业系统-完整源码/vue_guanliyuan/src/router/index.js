@@ -12,14 +12,11 @@ const UserList = () => import('@/pages/system/user/index.vue')
 const RoleManage = () => import('@/pages/system/role/index.vue')
 const EmployeeList = () => import('@/pages/system/employee/index.vue')
 const Approval = () => import('@/pages/system/approval/index.vue')
-const PostList = () => import('@/pages/forum/PostList.vue')
-const PostDetail = () => import('@/pages/forum/PostDetail.vue')
-const CommentList = () => import('@/pages/forum/Commentlist.vue')
-const MuteManage = () => import('@/pages/forum/MuteManage.vue')
 const RepairOrder = () => import('@/pages/repair/RepairOrder.vue')
 const RepairFeedback = () => import('@/pages/repair/Feedback.vue')
-const TravelLog = () => import('@/pages/travel/TravelLog.vue')
-const TravelPassList = () => import('@/pages/travel/TravelPassList.vue')
+const Inspection = () => import('@/pages/inspection/index.vue')
+const RepairAnalytics = () => import('@/pages/analytics/RepairAnalytics.vue')
+const InspectionAnalytics = () => import('@/pages/analytics/InspectionAnalytics.vue')
 const ActivityLog = () => import('@/pages/monitor/logininfor/index.vue')
 const AdminProfile = () => import('@/pages/profile/index.vue')
 const router = createRouter({
@@ -41,6 +38,17 @@ const router = createRouter({
       redirect: '/dashboard',
       children: [
         {
+          path: 'analytics/repair', component: RepairAnalytics, meta: { title: '工单分析', requiresAuth: true }
+        },
+        {
+          path: 'analytics/inspection', component: InspectionAnalytics, meta: { title: '巡检分析', requiresAuth: true }
+        },
+        {
+          path: 'inspection',
+          component: Inspection,
+          meta: { title: '巡检管理', requiresAuth: true }
+        },
+        {
           path: 'dashboard',
           component: Dashboard,
           meta: { title: '数据统计', requiresAuth: true }
@@ -50,16 +58,6 @@ const router = createRouter({
           component: AdminProfile,
           meta: { title: '个人信息', requiresAuth: true }
         },
-        {
-          path: 'travel/pass-list',
-          component: TravelPassList,
-          meta: { title: '出行码列表', requiresAuth: true }
-        },
-        // {
-        //   path: 'travel/log',
-        //   component: TravelLog,
-        //   meta: { title: '出行码使用情况', requiresAuth: true }
-        // },
         {
           path: 'system/notice/create',
           component: NoticeCreate,
@@ -94,27 +92,6 @@ const router = createRouter({
           path: 'system/approval',
           component: Approval,
           meta: { title: '审核列表', requiresAuth: true }
-        },
-        {
-          path: 'forum/posts',
-          component: PostList,
-          meta: { title: '帖子列表', requiresAuth: true }
-        },
-        {
-          path: 'forum/posts/:id',
-          component: PostDetail,
-          props: true,
-          meta: { title: '帖子详情', requiresAuth: true }
-        },
-        {
-          path: 'forum/comments',
-          component: CommentList,
-          meta: { title: '评论列表', requiresAuth: true }
-        },
-        {
-          path: 'forum/mute',
-          component: MuteManage,
-          meta: { title: '禁言用户', requiresAuth: true }
         },
         {
           path: 'repair/list',

@@ -109,7 +109,7 @@ public List<FeeBill> batchGetByIds(List<Long> billIds) {
 }
 ```
 
-#### 批量标记为已支付
+#### 批量处理账单
 ```java
 public void batchMarkPaid(List<Long> billIds) {
     // 并行处理多个账单
@@ -305,4 +305,3 @@ log.info("并行处理完成");
 - ✅ 批量数据查询：并行查询，响应时间减少50%+
 - ✅ 异步任务处理：不阻塞主流程，用户体验更好
 - ✅ 批量数据处理：并行处理，吞吐量提升2-3倍
-
